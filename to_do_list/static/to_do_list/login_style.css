@@ -1,0 +1,21 @@
+body{
+    background-color: whitesmoke;
+}
+
+#center{
+    margin: calc(50vh - 300px) calc(50vw - 250px);
+    width: 500px;
+    height: auto;
+    padding:50px;
+    border:solid 1px rgb(190, 189, 189);
+    border-radius: 0.25rem;
+}
+
+@media only screen and (max-width: 600px)  {
+    #center{
+        margin:0;
+        width: 100vw;
+        height: auto;
+        border:unset;
+    }
+}

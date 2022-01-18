@@ -1,0 +1,41 @@
+{% extends 'to_do_list/layout.html' %}
+
+
+{% block menu %}
+    <div style="clear:left"></div>
+    <p style="color: #858388;font-size:18px">Notes 
+        <label id="add-notes" onclick="show_add_note_view()">+</label>
+    </p>
+
+    <div id="notes">
+        {% for note in notes %}
+            <div id="card" name="note_{{note.pk}}" onclick="choose_page(this,{{note.pk}})">{% if note.title %}{{note.title}}{% endif %}</div>
+        {% endfor %}
+    </div>
+{% endblock menu %}
+
+{% block body %}
+    <nav class="nav-bar" style="font-size:18px;margin-bottom:25px;">
+
+        <div class="nav-link" style="float:right" onclick="location.reload()">Save</div>
+        <div class="nav-link" style="float:right">Share</div>
+        <div class="nav-link" style="float:right">Send</div>
+        <div class="nav-link" style="float:right;">Add</div>
+
+        <div style="clear:both"></div>
+    </nav>
+
+    <div id="note" onkeyup="autosave(this)">
+        <h1 contentEditable="true" onkeyup="check_empty_title(this)"></h1>
+        <div id="content" contentEditable="true" onkeyup="check_empty(this)"></div>
+    </div>
+    {% if go_last_page %}
+    <script>
+        document.addEventListener('DOMContentLoaded',() => {
+            const card = document.querySelectorAll('#card')[document.querySelectorAll('#card').length - 1];
+            choose_page(card,card.getAttribute('name').substring(5));
+        })
+    </script>
+    {% endif %}
+    {% csrf_token %}
+{% endblock body %}
