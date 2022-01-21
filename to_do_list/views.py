@@ -1,4 +1,5 @@
 import json
+import re
 from telnetlib import STATUS
 from turtle import goto
 from django.forms.widgets import Input, Select
@@ -303,13 +304,16 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            url = request.POST['url'] or 'index'
+            return HttpResponseRedirect(reverse(url))
         else:
             return render(request, "to_do_list/login.html", {
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "to_do_list/login.html")
+        return render(request, "to_do_list/login.html",{
+            'url':request.GET.get('url') or 'index'
+        })
 
 def logout_view(request):
     logout(request)

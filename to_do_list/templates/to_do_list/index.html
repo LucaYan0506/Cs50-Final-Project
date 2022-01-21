@@ -1,4 +1,4 @@
-{% extends 'to_do_list/layout.html' %}
+{% extends 'layout.html' %}
 
 
 {% block menu %}
@@ -11,6 +11,18 @@
         {% for note in notes %}
             <div id="card" name="note_{{note.pk}}" onclick="choose_page(this,{{note.pk}})">{% if note.title %}{{note.title}}{% endif %}</div>
         {% endfor %}
+    </div>
+
+    <div style="margin-top:15px;border-top: 1px solid #b8bcc0"></div>
+
+    <div id="sub-menu-user">
+        <div onclick="show_add_note_view()">
+            New page...
+        </div>
+        <a href="#"><div>Profile</div></a>
+        <a href={% url 'chat' %}><div>Chat</div></a>
+        <div style="margin:10px 0px;border-top: 1.5px solid #b8bcc0;width:150px;padding:0px"></div>
+        <a href={% url 'logout' %}><div>Sign out</div></a>
     </div>
 {% endblock menu %}
 

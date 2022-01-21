@@ -80,28 +80,27 @@ function open_close_menu(icon){
         menu.style.animationDuration = '1s';
         menu.style.animationFillMode  = 'forwards';
 
-        icon.style.animation = 'move-right-icon';
-        icon.style.animationDuration = '1s';
-        icon.style.animationFillMode  = 'forwards';
-
         body = document.querySelector('.body');
         body.style.animation = 'move-right-body';
         body.style.animationDuration = '1s';
         body.style.animationFillMode  = 'forwards';
+        const icon = document.querySelector('.body #icon');
+        icon.remove();
     }
     else{
         menu.style.animationName = 'move-left-menu';
         menu.style.animationDuration = '1s';
         menu.style.animationFillMode  = 'forwards';
-    
-        icon.style.animation = 'move-left-icon';
-        icon.style.animationDuration = '1s';
-        icon.style.animationFillMode  = 'forwards';
 
         body = document.querySelector('.body');
         body.style.animation = 'move-left-body';
         body.style.animationDuration = '1s';
         body.style.animationFillMode  = 'forwards';
+        
+        const icon = document.querySelector('#icon').cloneNode(true);
+        icon.style.position = "fixed";
+        icon.style.top = "3px";
+        body.append(icon);
     }
 }
 
@@ -128,8 +127,7 @@ function choose_page(card,pk,onpopstate = false){
             history.pushState({'section':pk},"",`?page=${pk}`);   
     })
 
-    console.log(document.querySelector('.menu').clientWidth);
-    if (document.querySelector('.menu').clientWidth < 600){
+    if (window.innerWidth < 600){
         open_close_menu(document.querySelector('.menu #icon'));
     }
 }
