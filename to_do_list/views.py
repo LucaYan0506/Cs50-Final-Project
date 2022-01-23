@@ -1,7 +1,4 @@
 import json
-import re
-from telnetlib import STATUS
-from turtle import goto
 from django.forms.widgets import Input, Select
 from django.http.response import JsonResponse
 from django.shortcuts import render,redirect
@@ -9,6 +6,7 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls.base import reverse
+from django.http import HttpResponse
 from django import forms
 
 from .models import *
@@ -290,7 +288,7 @@ def index(request,go_last_page = False):
         if (request.session.get('go_last_page')):
             go_last_page = request.session['go_last_page']
         return render(request,'to_do_list/index.html',{
-            'notes':request.user.page.all(),
+            'folders':request.user.folder.all(),
             'go_last_page':go_last_page
         })
     return HttpResponseRedirect(reverse('login'))
@@ -348,6 +346,13 @@ def register_view(request):
                 'form':register_form(request.POST)
             })
         login(request, user)
+
+         #create a folder and note_page as default
+        folder = Folder(title='Main', owner = request.user, pk_folder = 'Main'+request.user.username)
+        folder.save()
+        page = Page(folder=folder)
+        page.save()
+        
         return HttpResponseRedirect(reverse("index"))
 
     return render(request,'to_do_list/register.html',{
@@ -357,15 +362,30 @@ def register_view(request):
 @login_required
 def add_note(request):
     if request.method == 'POST':
-        data = add_post_form(request.POST).save(commit=False)
+        data = add_post_form(request.user.pk ,request.POST).save(commit=False)
         data.poster = request.user
         data.save()
         request.session['go_last_page'] = True
         return redirect('index',)
 
+@login_required
+def add_folder(request):
+    if request.method == 'POST':
+        data = Folder(title=request.POST['title'], owner = request.user, pk_folder = request.POST['title']+request.user.username)
+        try:
+            data.save()
+        except:
+            return render(request,'to_do_list/index.html',{
+                'folders':request.user.folder.all(),
+                'error': 'Folder already exists'
+            })
+
+        return HttpResponseRedirect(reverse('index'))
+    return HttpResponse('Post method required',status=404)
+
 def get_note(request):
     note = Page.objects.get(pk=request.GET.get('pk'))
-    if note.poster.pk is not request.user.pk:
+    if note.folder.owner.pk is not request.user.pk:
         return JsonResponse({
             'error':"You don't have the permission.",
         },status=403,safe=False)

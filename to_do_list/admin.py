@@ -5,4 +5,4 @@ from .models import *
 
 admin.site.register(User)
 admin.site.register(Page)
-admin.site.register(SubPage)
+admin.site.register(Folder)

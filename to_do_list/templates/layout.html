@@ -39,16 +39,28 @@
 
                 <div class="nav-link" style="float:right" onclick="save_note()">Save</div>
                 <div class="nav-link" style="float:right">Share</div>
-                <div class="nav-link" style="float:right">Send</div>
+                <div class="nav-link" style="float:right" onclick="print_element('#add-note')">Print</div>
             </nav>
             <form action="{% url 'add_note' %}" method="post">
                 {% csrf_token %}
+                <div style="margin:20px;font-size:16px;">Folder: {{page_form.folder}}</div>
                 {{page_form.title}}
                 {{page_form.content}}
             </form>
         </div>
     </div>
-    
+ 
+    <div id="container">
+        <div id="add-folder">
+            <form action="{% url 'add_folder' %}" method="post">
+                {% csrf_token %}
+                <b>Add new folder</b>
+                <input type="text" name="title" placeholder="new folder">
+                <button>Add</button>
+            </form>
+        </div>
+    </div>
+
     <script src="{% static 'to_do_list/index.js' %}"></script>
 </body>
 </html>

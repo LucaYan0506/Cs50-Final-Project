@@ -7,9 +7,28 @@ document.addEventListener('DOMContentLoaded',() => {
         })
         open_close_submenu(submenu)
     }
-    if (window.innerWidth < 600)
-    open_close_menu(document.querySelector('#icon'));
+
+    document.querySelector('#card').click();
+
 })
+
+window.onresize = () => {
+    if (window.innerWidth < 600){
+        const menu = document.querySelector('.menu');
+        if (menu.style.animationName != 'move-left-menu'){
+            body = document.querySelector('.body');
+            body.style=`pointer-events: none;opacity: 0;`;
+        }
+    }
+    else{
+        body = document.querySelector('.body');
+        body.style=`pointer-events: initial;opacity: 1;`;
+        const menu = document.querySelector('.menu');
+        if (menu.style.animationName == 'move-left-menu'){
+            body.style.marginLeft = "0px";
+        }
+    }
+};
 
 window.addEventListener('mouseup', function(event){
 	const user_box = document.querySelector('#user');
@@ -40,24 +59,33 @@ function show_add_note_view(){
     if (window.innerWidth < 600)
         return save_note();
     
-    const view = document.querySelector('#container');
+    const view = document.querySelector('#container #add-note').parentElement;
     view.style.display = "block";   
     view.style.animationName = 'fade-out';
     view.style.animationDuration = '1s';
     view.style.animationFillMode  = 'forwards';
 }
 
-document.querySelector('#container').addEventListener('click',(event) => {
-    if (event.target === document.querySelector('#container')){
-        event.target.style.animation = 'fade-in';
-        event.target.style.animationDuration = '1s';
-        event.target.style.animationFillMode  = 'forwards';
-    }
-})
+function show_add_folder_view(){
+    const view = document.querySelector('#container #add-folder').parentElement;
+    view.style.display = "block";   
+    view.style.animationName = 'fade-out';
+    view.style.animationDuration = '1s';
+    view.style.animationFillMode  = 'forwards';
+}
 
-document.querySelector('#container').addEventListener('animationend',() => {
-    if (document.querySelector('#container').style.animationName === 'fade-in')
-        document.querySelector('#container').style.display = 'none';
+document.querySelectorAll('#container').forEach(elem => {
+    elem.addEventListener('click',(event) => {
+        if (event.target === elem){
+            event.target.style.animation = 'fade-in';
+            event.target.style.animationDuration = '1s';
+            event.target.style.animationFillMode  = 'forwards';
+        }
+    })
+    elem.addEventListener('animationend',() => {
+        if (elem.style.animationName === 'fade-in')
+            elem.style.display = 'none';
+    })
 })
 
 document.querySelector('#add-note textarea').addEventListener('keydown',() => {
@@ -169,4 +197,68 @@ function autosave(note,table){
     .then(data => {
         console.log(data.message);
     })
+}
+
+function collaps_uncollapse(self,pages){
+    if (pages.style.display == 'none'){
+        pages.style.display = 'block';
+        self.childNodes[1].className = "arrow down"
+    }
+    else{
+        pages.style.display = 'none';
+        self.childNodes[1].className = "arrow right"
+    }
+}
+
+function print_element(elem){
+    let styles;
+    if (elem === '.body'){
+        styles = `
+        @media print {
+            @page {
+                size: auto;
+                margin: 0;  /* this affects the margin in the printer settings */
+            }
+            body * {
+            visibility: hidden;
+            }
+            .body{
+            margin-left: 0px;
+            }
+            #note, #note * {
+            visibility: visible;
+            }
+        }
+        `
+    }
+    else if(elem == '#add-note'){
+        styles = `
+        @media print {
+            @page {
+                size: auto;
+                margin: 0;  /* this affects the margin in the printer settings */
+            }
+            body * {
+            visibility: hidden;
+            }
+            #add-note{
+                top:0px;
+            }
+            #add-note form, #add-note form * {
+            visibility: visible;
+            }
+            #add-note form div, #add-note form select {
+                display: none;
+            }
+        }
+        `
+    }
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = styles;
+    document.head.appendChild(styleSheet);
+
+    print();
+
+    document.head.removeChild(styleSheet);
 }

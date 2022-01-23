@@ -9,18 +9,20 @@ class User(AbstractUser):
     city = models.CharField(max_length=100, blank=True,null=True)
     state = models.CharField(max_length=100, blank=True,null=True)
 
+class Folder(models.Model):
+    owner = models.ForeignKey(User,default="",on_delete=CASCADE,related_name='folder')
+    pk_folder = models.CharField(max_length=400,blank=True,null=True,unique=True)
+    title = models.CharField(max_length=200,blank=True,null=True)
+    def __str__(self):
+        return self.title
+    
 class Page(models.Model):
-    poster = models.ForeignKey(User,default="",on_delete=CASCADE,related_name='page')
+    folder = models.ForeignKey(Folder,default="",on_delete=CASCADE,related_name='pages')
     title = models.CharField(max_length=200,blank=True,null=True)
     content = models.TextField(blank=True,null=True)
-
+        
     def serialize(self):
         return {
             'title':self.title,
             'content':self.content
         }
-
-class SubPage(models.Model):
-    parent_page = models.ForeignKey(Page,default="",on_delete=CASCADE,related_name='child')
-    title = models.CharField(max_length=200,default='')
-    content = models.TextField()

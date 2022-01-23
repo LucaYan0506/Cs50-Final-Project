@@ -6,16 +6,26 @@
     <p style="color: #858388;font-size:18px">Notes 
         <label id="add-notes" onclick="show_add_note_view()">+</label>
     </p>
-
     <div id="notes">
-        {% for note in notes %}
-            <div id="card" name="note_{{note.pk}}" onclick="choose_page(this,{{note.pk}})">{% if note.title %}{{note.title}}{% endif %}</div>
+        {% for folder in folders  %}
+            <button class="folder" onclick="collaps_uncollapse(this,pages{{folder.pk}})">
+                {{folder.title}}<span class="arrow {% if folder.pages.exists %}down {% else %}right{% endif %}"></span>
+            </button>
+            <div id="pages{{folder.pk}}">
+                {% for note in folder.pages.all %}
+                    <div id="card" name="note_{{note.pk}}" onclick="choose_page(this,{{note.pk}})">{% if note.title %}{{note.title}}{% endif %}</div>
+                {% endfor %}
+            </div>
         {% endfor %}
     </div>
+
 
     <div style="margin-top:15px;border-top: 1px solid #b8bcc0"></div>
 
     <div id="sub-menu-user">
+        <div onclick="show_add_folder_view()">
+            New folder...
+        </div>
         <div onclick="show_add_note_view()">
             New page...
         </div>
@@ -31,7 +41,7 @@
 
         <div class="nav-link" style="float:right" onclick="location.reload()">Save</div>
         <div class="nav-link" style="float:right">Share</div>
-        <div class="nav-link" style="float:right">Send</div>
+        <div class="nav-link" style="float:right" onclick="print_element('.body')">Print</div>
         <div class="nav-link" style="float:right;">Add</div>
 
         <div style="clear:both"></div>
@@ -41,12 +51,17 @@
         <h1 contentEditable="true" onkeyup="check_empty_title(this)"></h1>
         <div id="content" contentEditable="true" onkeyup="check_empty(this)"></div>
     </div>
+
+    <! --- this is script is used to open last page when a new page is created  --->
     {% if go_last_page %}
     <script>
         document.addEventListener('DOMContentLoaded',() => {
             const card = document.querySelectorAll('#card')[document.querySelectorAll('#card').length - 1];
             choose_page(card,card.getAttribute('name').substring(5));
         })
+        {% if error %}
+            alert('{{error}}')
+        {% endif %}
     </script>
     {% endif %}
     {% csrf_token %}

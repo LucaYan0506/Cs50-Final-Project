@@ -159,6 +159,42 @@ body{
     resize:none;
 }
 
+#add-folder{
+    position: absolute;
+    left: calc(50% - 125px);
+    top: calc(50% - 80px);
+    width: 230px;
+    height: 65px;
+    padding:10px;
+    background-color: white;
+}
+
+#add-folder form button{
+    color: #007bff;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #007bff;
+    padding: 0.375rem 0.75rem;
+    text-align: center;
+    white-space: nowrap;
+    margin-top:10px;
+    float:right;
+    user-select: none;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+#add-folder form button:hover{
+    background-color: #007bff;
+    color: #fff;
+}
+
+#add-folder form input{
+    padding: 0.375rem 0.75rem;
+    margin-top:10px;
+}
+
 .nav-bar{
     font-size:14px
 }
@@ -173,12 +209,12 @@ body{
         left:0px;
     }
     100%{
-        left:-320px;
+        left:-100vw;
     }
 }
 @keyframes move-right-menu{
     0%{
-        left:-320px;
+        left:-100vw;
     }
     100%{
         left:0px;
@@ -204,6 +240,9 @@ body{
 
 
 @media only screen and (max-width: 600px)  {
+    .nav-bar{
+        margin-left: 50px;
+    }
     .menu{
         width: calc(100% - 32px);
     }
@@ -211,23 +250,6 @@ body{
     .body{
         margin-left: 0px;
     }
-    @keyframes move-left-menu {
-        0%{
-            left:0px;
-        }
-        100%{
-            left:-100vw;
-        }
-    }
-    @keyframes move-right-menu{
-        0%{
-            left:-100vw;
-        }
-        100%{
-            left:0px;
-        }
-    }
-    
     @keyframes move-right-body {
         0%{
             opacity: 1;
@@ -290,10 +312,58 @@ body{
 }
 
 #card{
+    margin-left:15px;
     padding:10px 15px;
     cursor: pointer;
 }
 
 #card:hover{
     background-color: gainsboro;
+}
+
+.form-select{
+    display: block;
+    width: 100%;
+    padding: .375rem 2.25rem .375rem .75rem;
+    -moz-padding-start: calc(0.75rem - 3px);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.folder{
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    padding:10px;
+    margin-top:3px;
+    text-align:left;
+}
+
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    padding: 5px;
+    float: right;
+}
+  
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }
