@@ -1,14 +1,17 @@
 {% extends 'layout.html' %}
+{% load static %}
 
 {% block menu %}
+    <link rel="stylesheet" href="{% static 'to_do_list/style.css' %}">
+
     <div style="clear:left"></div>
     <p style="color: #858388;font-size:18px">Chat 
         <label id="add-notes" onclick="show_add_note_view()">+</label>
     </p>
 
     <div id="notes">
-        {% for note in notes %}
-            <div id="card" name="note_{{note.pk}}" onclick="choose_page(this,{{note.pk}})">{% if note.title %}{{note.title}}{% endif %}</div>
+        {% for chat_group in chat_groups %}
+            <div id="card" name="note_{{chat_group.pk}}" onclick="choose_group(this,{{chat_group.pk}})">{{chat_group.title}}</div>
         {% endfor %}
     </div>
 
@@ -26,5 +29,21 @@
     </div>
 {% endblock menu %}
 {% block body %}
-    {% include 'chat/room.html' %}
+    <div id="div-background">
+    
+    </div>
+
+    <div id="chat-box">
+        <div style="height: 40px;">ad</div>
+        <div id="chat-content">
+        </div>
+        <input type="text" placeholder="Type a message" required>
+        <button type="button" class="btn btn-outline-dark">Send</button>
+    </div>
+
+    <script type="text/javascript"> 
+        var user = "{{request.user}}";
+     </script>
+     
+    <script src="{% static 'chat/index.js' %}"></script>
 {% endblock body %}

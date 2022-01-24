@@ -367,3 +367,87 @@ body{
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
+
+#chat-box{
+    position: relative;
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:2vh;
+    height: 96vh;
+    width: 100%;
+    max-width: 1000px;
+    background-color: rgb(237, 237, 237);
+}
+
+#chat-box input{
+    padding:10px 15px;
+    margin:11px;
+    width: calc(100% - 140px);
+    border:none;
+    border-radius: 45px;
+}
+
+#div-background{
+    overflow: hidden;
+    position:fixed;
+    height: calc(100vh - 8px);
+    width: calc(100vw - 380px);
+    top: 0;
+    opacity: 0.2;
+    background-image: url(https://previews.123rf.com/images/macrovector/macrovector1407/macrovector140700436/30081081-seamless-social-network-media-icons-pattern-background-vector-illustration.jpg);
+}
+
+#chat-content{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto ;
+    background-color:#e7d7d7;
+    width: 100%;
+    height: calc(100% - 110px);
+    padding-top:10px;
+}
+
+.btn-outline-dark {
+    color: #343a40;
+    background-color: transparent;
+    background-image: none;
+    border-color: #343a40;
+}
+
+.btn-outline-dark:hover {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
+    text-decoration: none;
+}
+
+.btn {
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    cursor: pointer;
+}
+
+.chat-message{
+    border:solid 1px;
+    border-radius: 5px;
+    padding:2px 10px; 
+    margin:2px 5px;
+    margin-right: auto;
+    max-width: 40%;
+    background-color: whitesmoke;
+}
+
+.mine{
+    margin-right:5px;
+    margin-left: auto;
+}
