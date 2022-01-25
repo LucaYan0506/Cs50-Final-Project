@@ -159,7 +159,7 @@ body{
     resize:none;
 }
 
-#add-folder{
+#add-folder, #add-chat, #join-chat {
     position: absolute;
     left: calc(50% - 125px);
     top: calc(50% - 80px);
@@ -169,7 +169,7 @@ body{
     background-color: white;
 }
 
-#add-folder form button{
+#blue-btn{
     color: #007bff;
     background-color: transparent;
     background-image: none;
@@ -185,12 +185,13 @@ body{
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-#add-folder form button:hover{
+#blue-btn{
     background-color: #007bff;
     color: #fff;
 }
 
-#add-folder form input{
+#form-input{
+    width:60%;
     padding: 0.375rem 0.75rem;
     margin-top:10px;
 }

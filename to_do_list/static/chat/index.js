@@ -47,3 +47,24 @@ function choose_group(card,pk){
     prev_card = card;
     curr_page_pk = pk;
 }
+
+function show_add_chat_view(){
+    if (window.innerWidth < 600)
+        return save_note();
+    
+    const view = document.querySelector('#container #add-chat').parentElement;
+    view.style.display = "block";   
+    view.style.animationName = 'fade-out';
+    view.style.animationDuration = '1s';
+    view.style.animationFillMode  = 'forwards';
+
+}function show_join_chat_view(){
+    if (window.innerWidth < 600)
+        return save_note();
+    
+    const view = document.querySelector('#container #join-chat').parentElement;
+    view.style.display = "block";   
+    view.style.animationName = 'fade-out';
+    view.style.animationDuration = '1s';
+    view.style.animationFillMode  = 'forwards';
+}

@@ -59,10 +59,12 @@
             const card = document.querySelectorAll('#card')[document.querySelectorAll('#card').length - 1];
             choose_page(card,card.getAttribute('name').substring(5));
         })
-        {% if error %}
-            alert('{{error}}')
-        {% endif %}
     </script>
+    {% endif %}
+    {% if error %}
+    <script>
+        alert('{{error}}')
+    </script>    
     {% endif %}
     {% csrf_token %}
 {% endblock body %}
