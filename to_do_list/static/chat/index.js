@@ -1,7 +1,8 @@
 let chat_name = "default";
-const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + chat_name + "/");
+let chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + chat_name + "/");
 
-chatSocket.onmessage = (event) =>{
+function receive_message(event){
+    console.log(event.data);
     const data = JSON.parse(event.data);
     const message = document.createElement('div');
     message.innerHTML += data['user'] + "<br>" + data['message'] + "<br>";
@@ -46,13 +47,17 @@ function choose_group(card,pk){
     card.style.background = 'gainsboro';
     prev_card = card;
     curr_page_pk = pk;
+    chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + card.innerHTML.replace(/\s/g, '') + "/");
+    chatSocket.onmessage = (event) => {
+        receive_message(event)
+    }
 }
 
 function show_add_chat_view(){
     if (window.innerWidth < 600)
         return save_note();
     
-    const view = document.querySelector('#container #add-chat').parentElement;
+    const view = document.querySelector('#container #create-chat').parentElement;
     view.style.display = "block";   
     view.style.animationName = 'fade-out';
     view.style.animationDuration = '1s';

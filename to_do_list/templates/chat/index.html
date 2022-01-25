@@ -2,8 +2,6 @@
 {% load static %}
 
 {% block menu %}
-    <link rel="stylesheet" href="{% static 'to_do_list/style.css' %}">
-
     <div style="clear:left"></div>
     <p style="color: #858388;font-size:18px">Chat 
         <label id="add-notes" onclick="show_add_note_view()">+</label>
@@ -37,7 +35,7 @@
     </div>
 
     <div id="chat-box">
-        <div style="height: 40px;">ad</div>
+        <div style="height: 20px; padding: 10px 30px;"></div>
         <div id="chat-content">
         </div>
         <input type="text" placeholder="Type a message" required>

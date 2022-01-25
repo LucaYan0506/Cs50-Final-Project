@@ -32,7 +32,7 @@ class Page(models.Model):
 class Chat_group(models.Model):
     title = models.CharField(max_length=200,default="")
     administrator = models.ManyToManyField(User,related_name='my_group')
-    member = models.ManyToManyField(User,related_name='others_group')
+    member = models.ManyToManyField(User,related_name='others_group',blank=True)
     
 
 class Chat_message(models.Model):

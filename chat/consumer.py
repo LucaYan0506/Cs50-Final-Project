@@ -22,6 +22,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         )    
 
     async def receive(self, text_data):
+        print(self.room_group_name)
         user = json.loads(text_data)['user']
         message = json.loads(text_data)['message']
         

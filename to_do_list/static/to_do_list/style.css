@@ -159,7 +159,7 @@ body{
     resize:none;
 }
 
-#add-folder, #add-chat, #join-chat {
+#add-folder, #join-chat {
     position: absolute;
     left: calc(50% - 125px);
     top: calc(50% - 80px);
@@ -194,6 +194,35 @@ body{
     width:60%;
     padding: 0.375rem 0.75rem;
     margin-top:10px;
+}
+
+#create-chat{
+    position: absolute;
+    left: calc(50% - 260px);
+    top: calc(45% - 185px);
+    width: 500px;
+    height: 350px;
+    padding:10px;
+    background-color: white;
+}
+
+.form-control {
+    width: 85%;
+    padding:10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+}
+
+#dropmenu{
+    margin-left:8px;
+    padding:5px;
+    color: #fff;
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.form-check-label{
+    display: inline-block;
 }
 
 .nav-bar{

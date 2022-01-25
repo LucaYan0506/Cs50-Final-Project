@@ -62,22 +62,34 @@
     </div>
 
     <div id="container">
-        <div id="add-chat">
-            <form action="{% url 'add_folder' %}" method="post">
+        <div id="create-chat">
+            <form action="{% url 'create_chat' %}" method="post">
                 {% csrf_token %}
-                <b>Add new Chat</b>
-              
+                <b>Create new Chat</b><br>
+                <label for="title" style="display:inline-block;margin: 0.5rem;">Name</label><br>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter name of the chat"><br>
+                <label for="title" style="display:inline-block;margin: 0.5rem;">Members</label><br>
+                <label class="form-control" id="dropmenu">Select...</label><br>
+                <div style="margin-top:10px;display:flex;overflow-y:auto">
+                    <input type="checkbox" name="users" id="user1" value="1" />
+                    <label class="form-check-label" for="user1">user1</label>
+                    <input type="checkbox" name="users" id="user2" value="2" />
+                    <label class="form-check-label" for="user2">user2</label>
+                    <input type="checkbox" name="users" id="user3" value="3" />
+                    <label class="form-check-label" for="user3">user3</label>
+                </div>
+                <button id="blue-btn">Create</button>
             </form>
         </div>
     </div>
 
     <div id="container">
         <div id="join-chat">
-            <form action="#" method="post">
+            <form action="{% url 'join_chat' %}" method="post">
                 {% csrf_token %}
                 <b>Join Chat</b>
-                <input id="form-input" type="text" name="title" placeholder="Chat name">
-                <button id="blue-btn">Add</button>
+                <input id="form-input" type="text" name="pk" placeholder="Chat id number">
+                <button id="blue-btn">Join</button>
             </form>
         </div>
     </div>
