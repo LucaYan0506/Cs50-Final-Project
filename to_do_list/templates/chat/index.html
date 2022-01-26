@@ -4,7 +4,7 @@
 {% block menu %}
     <div style="clear:left"></div>
     <p style="color: #858388;font-size:18px">Chat 
-        <label id="add-notes" onclick="show_add_note_view()">+</label>
+        <label id="add-notes" onclick="show_join_chat_view()">+</label>
     </p>
 
     <div id="notes">
@@ -45,6 +45,11 @@
     <script type="text/javascript"> 
         var user = "{{request.user}}";
      </script>
-     
+
+     {% if error %}
+        <script>
+            alert('{{error}}')
+        </script>
+     {% endif %}
     <script src="{% static 'chat/index.js' %}"></script>
 {% endblock body %}

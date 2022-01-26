@@ -1,7 +1,7 @@
 from django.urls.base import reverse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.db.models import Q
+from itertools import chain 
 
 from to_do_list.models import Chat_group
 
@@ -9,7 +9,7 @@ from to_do_list.models import Chat_group
 
 def chat_view(request):
     if request.user.is_authenticated:
-        chat_group = Chat_group.objects.filter(Q(administrator = request.user) | Q(member = request.user))
+        chat_group = list(chain(Chat_group.objects.filter(administrator = request.user) ,Chat_group.objects.filter(member = request.user)))
         return render(request,'chat/index.html',{
             'chat_groups' : chat_group
         })
@@ -17,12 +17,22 @@ def chat_view(request):
 
 def join_chat(request):
     if request.user.is_authenticated and request.method == 'POST':
-        chat_group = Chat_group.objects.get(pk = request.POST['pk'])
-        chat_group.member.add(request.user)
+        try:
+            chat_group = Chat_group.objects.get(pk = request.POST['pk'])
+            chat_group.member.add(request.user)
+        except:
+            chat_groups = list(chain(Chat_group.objects.filter(administrator = request.user) ,Chat_group.objects.filter(member = request.user)))
+            return render(request,'chat/index.html',{
+                'chat_groups' : chat_groups,
+                'error': 'Invalid Id'
+            }) 
     return HttpResponseRedirect(reverse('chat'))
 
 def create_chat(request):
     if request.user.is_authenticated and request.method == 'POST':
-        print(request.POST.getlist('users'))
-        #chat_group = Chat_group(title = request.POST['title'], administrator = request.user)
+        members = request.POST.getlist('users')
+        chat_group = Chat_group(title = request.POST['title'])
+        chat_group.save()
+        chat_group.administrator.add(request.user)
+        chat_group.member.set(members)
     return HttpResponseRedirect(reverse('chat'))

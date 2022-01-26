@@ -28,4 +28,5 @@ class add_post_form(forms.ModelForm):
 def add_form_to_context(request):
     return {
         'page_form': add_post_form(request.user.pk,request.POST),
+        'all_users': User.objects.all()
     }

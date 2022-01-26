@@ -5,7 +5,7 @@ function receive_message(event){
     console.log(event.data);
     const data = JSON.parse(event.data);
     const message = document.createElement('div');
-    message.innerHTML += data['user'] + "<br>" + data['message'] + "<br>";
+    message.innerHTML += '<b style="color:blue">' + data['user'] + "</b><br>" + data['message'] + "<br>";
     message.className = 'chat-message'
     if (data['user'] === user)
         message.className += ' mine';
@@ -47,7 +47,8 @@ function choose_group(card,pk){
     card.style.background = 'gainsboro';
     prev_card = card;
     curr_page_pk = pk;
-    chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + card.innerHTML.replace(/\s/g, '') + "/");
+    chatSocket.close()
+    chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + card.getAttribute("name") + "/");
     chatSocket.onmessage = (event) => {
         receive_message(event)
     }
