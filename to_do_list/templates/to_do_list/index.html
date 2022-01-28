@@ -39,7 +39,7 @@
 {% block body %}
     <nav class="nav-bar" style="font-size:18px;margin-bottom:25px;">
 
-        <div class="nav-link" style="float:right" onclick="location.reload()">Save</div>
+        <div class="nav-link" style="float:right" onclick="save_btn()">Save</div>
         <div class="nav-link" style="float:right">Share</div>
         <div class="nav-link" style="float:right" onclick="print_element('.body')">Print</div>
         <div class="nav-link" style="float:right;">Add</div>
@@ -56,8 +56,14 @@
     {% if go_last_page %}
     <script>
         document.addEventListener('DOMContentLoaded',() => {
-            const card = document.querySelectorAll('#card')[document.querySelectorAll('#card').length - 1];
-            choose_page(card,card.getAttribute('name').substring(5));
+            const card = document.getElementsByName("note_{{go_last_page}}")[0];
+            choose_page(card,"{{go_last_page}}");
+        })
+    </script>
+    {% else %}
+    <script>
+        document.addEventListener('DOMContentLoaded',() => {
+            document.querySelector('#card').click();
         })
     </script>
     {% endif %}

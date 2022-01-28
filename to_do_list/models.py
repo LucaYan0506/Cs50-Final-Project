@@ -39,3 +39,9 @@ class Chat_message(models.Model):
     chat_group = models.ForeignKey(Chat_group,default="", on_delete=CASCADE,related_name='chat_message')
     sender = models.ForeignKey(User,default="",on_delete=models.SET_NULL,null=True,related_name='chat_message')
     message = models.TextField(default="")
+
+    def serialize(self):
+        return{
+            'user':self.sender.username,
+            'message':self.message,
+        }

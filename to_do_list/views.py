@@ -1,4 +1,5 @@
 import json
+from tkinter.tix import Tree
 from django.forms.widgets import Input, Select
 from django.http.response import JsonResponse
 from django.shortcuts import render,redirect
@@ -286,7 +287,11 @@ def index(request,go_last_page = False):
     if request.user.is_authenticated:
         go_last_page = None
         if (request.session.get('go_last_page')):
-            go_last_page = request.session['go_last_page']
+            go_last_page = False
+            if request.session['go_last_page']:
+                go_last_page = request.session['go_last_page']
+                request.session['go_last_page'] = None
+                
         return render(request,'to_do_list/index.html',{
             'folders':request.user.folder.all(),
             'go_last_page':go_last_page
@@ -365,7 +370,7 @@ def add_note(request):
         data = add_post_form(request.user.pk ,request.POST).save(commit=False)
         data.poster = request.user
         data.save()
-        request.session['go_last_page'] = True
+        request.session['go_last_page'] = data.pk
         return redirect('index',)
 
 @login_required

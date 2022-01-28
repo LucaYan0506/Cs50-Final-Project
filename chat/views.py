@@ -1,9 +1,10 @@
+import json
 from django.urls.base import reverse
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 from itertools import chain 
 
-from to_do_list.models import Chat_group
+from to_do_list.models import Chat_group,Chat_message
 
 # Create your views here.
 
@@ -36,3 +37,29 @@ def create_chat(request):
         chat_group.administrator.add(request.user)
         chat_group.member.set(members)
     return HttpResponseRedirect(reverse('chat'))
+
+def send_message(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        chat_group = Chat_group.objects.get(pk = data['pk'])
+        chat_message = Chat_message(chat_group=chat_group,sender=request.user,message=data['message'])
+        chat_message.save()
+        return JsonResponse({
+            'message':'success'
+        },safe=False)
+    return HttpResponse('Post method required',status=404)
+    
+def get_message(request,chat_group_pk):
+    if request.user.is_authenticated:
+        if request.user.my_group.filter(pk = chat_group_pk).exists() or request.user.others_group.filter(pk = chat_group_pk).exists():
+            messages = Chat_message.objects.filter(chat_group=Chat_group.objects.get(pk = chat_group_pk))
+            return JsonResponse({
+                'body':[message.serialize() for message in messages],
+                'read':False
+            },safe=False,status=200)
+        return JsonResponse({
+            'error':'You are not allowed',
+        },safe=False,status=403)
+    return JsonResponse({
+        'error':'Login required'
+    },safe=False,status=404)

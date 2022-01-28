@@ -7,9 +7,6 @@ document.addEventListener('DOMContentLoaded',() => {
         })
         open_close_submenu(submenu)
     }
-
-    document.querySelector('#card').click();
-
 })
 
 window.onresize = () => {
@@ -96,7 +93,14 @@ document.querySelector('#add-note textarea').addEventListener('keydown',() => {
     element.parentElement.scrollTop = temp;
 })
 
+//save an existing note
+function save_btn(self){
+    autosave(document.querySelector('#note'))
+    location.reload()
+}
 
+
+//save a new note
 function save_note(){
     document.querySelector('#add-note form').submit();   
 }
@@ -138,7 +142,7 @@ function choose_page(card,pk,onpopstate = false){
     //change the background of the card in the menu
     if (prev_card)
         prev_card.style.background = '';
-    
+        
     card.style.background = 'gainsboro';
     prev_card = card;
     curr_page_pk = pk;
@@ -261,4 +265,13 @@ function print_element(elem){
     print();
 
     document.head.removeChild(styleSheet);
+}
+
+document.querySelector('#dropmenu').onclick = () =>{ 
+    const user_container = document.querySelector('#users-container');
+    if (user_container.style.display == 'none'){
+        user_container.style.display = 'flex';
+    }else{
+        user_container.style.display = 'none';
+    }
 }

@@ -199,14 +199,15 @@ body{
 #create-chat{
     position: absolute;
     left: calc(50% - 260px);
-    top: calc(45% - 185px);
+    top: calc(45% - 110px);
     width: 500px;
-    height: 350px;
+    height: 200px;
     padding:10px;
     background-color: white;
 }
 
 .form-control {
+    cursor: text;
     width: 85%;
     padding:10px;
     border: 1px solid #ced4da;
@@ -221,9 +222,17 @@ body{
     border-color: #545b62;
 }
 
-.form-check-label{
-    display: inline-block;
+#users-container{
+    border: 1px #dadada solid;
+    background-color: white;
+    margin-left: 8px;
+    margin-top:5px;
+    max-height: 100px;
+    flex-direction: column;
+    overflow-y:auto;
+    position: absolute;
 }
+
 
 .nav-bar{
     font-size:14px
