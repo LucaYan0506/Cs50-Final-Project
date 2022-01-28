@@ -5,6 +5,7 @@ let all_chatSocket = new Map();
 document.addEventListener('DOMContentLoaded',() => {
     document.querySelectorAll('#card').forEach((card) => {
         chat_name = card.getAttribute("name");
+        get_message(chat_name.substr(5))
         const chat_socket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + chat_name + "/");
         all_chatSocket.set(chat_name,chat_socket);
         chat_socket.onmessage = (event) => {
@@ -14,9 +15,13 @@ document.addEventListener('DOMContentLoaded',() => {
 })
 
 function receive_message(self,event){
-    console.log(self);
+    let pk = self.url.substr(self.url.search('note_')+ 5);
+    pk = pk.substr(0,pk.length - 1)
+
+    get_message(pk,false);
     if (self == curr_chatSocket){
         const data = JSON.parse(event.data);
+        read_message(pk);
         show_message(data);
     }
 }
@@ -37,14 +42,39 @@ function send_message(message){
     })
 }
 
-function get_message(pk){
+function read_message(pk){
+    fetch("/chat/read_message/", { 
+        method: 'PUT',
+        headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+        body:JSON.stringify({
+            'pk':pk
+        }),
+        mode: 'same-origin' // Do not send CSRF token to another domain.
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+}
+
+function get_message(pk, show = true){
     fetch(`/chat/get_message/${pk}`)
     .then(response => response.json())
     .then(data => {
         data.body.forEach((message) => {
-            show_message(message)
+            if (show == true){
+                show_message(message)
+            }
         })
         console.log(data.read)
+        if (data.read == false){
+            elem = document.getElementsByName(`note_${pk}`)[0];
+            if (elem.innerHTML[elem.innerHTML.length - 1] != '*'){
+                console.log(elem.innerHTML[elem.innerHTML.length - 1]);
+                elem.innerHTML += ' *';
+                elem.style.fontWeight = '900'
+            }
+        }
     })
 }
 
@@ -87,13 +117,19 @@ document.querySelector('#chat-box input').onkeyup = (event) => {
 
 function choose_group(card,pk){
     document.querySelector('#chat-box').style.display = 'block';
-    document.querySelector('#chat-box div').innerHTML = card.innerHTML;
     chat_name = card.getAttribute("name");
     //change the background of the card in the menu
     if (prev_card)
         prev_card.style.background = '';
     
     card.style.background = 'gainsboro';
+    card.style.fontWeight  = 'normal';
+
+    if (card.innerHTML[card.innerHTML.length - 1] == '*'){
+        card.innerHTML = card.innerHTML.substr(0,card.innerHTML.length - 2)
+    }
+    document.querySelector('#chat-box div').innerHTML = card.innerHTML;
+
     prev_card = card;
     curr_page_pk = pk;
 
@@ -102,6 +138,9 @@ function choose_group(card,pk){
     while(chat_message.firstChild){
         chat_message.removeChild(chat_message.lastChild);
     }
+
+    //set in the server that emssages in this group is read
+    read_message(pk);
 
     //get message of new group
     get_message(pk);

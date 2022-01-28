@@ -42,6 +42,7 @@ def send_message(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         chat_group = Chat_group.objects.get(pk = data['pk'])
+        chat_group.people_read.clear()
         chat_message = Chat_message(chat_group=chat_group,sender=request.user,message=data['message'])
         chat_message.save()
         return JsonResponse({
@@ -55,11 +56,23 @@ def get_message(request,chat_group_pk):
             messages = Chat_message.objects.filter(chat_group=Chat_group.objects.get(pk = chat_group_pk))
             return JsonResponse({
                 'body':[message.serialize() for message in messages],
-                'read':False
+                'read':Chat_group.objects.get(pk = chat_group_pk).already_read(request.user)
             },safe=False,status=200)
         return JsonResponse({
             'error':'You are not allowed',
         },safe=False,status=403)
     return JsonResponse({
         'error':'Login required'
+    },safe=False,status=404)
+
+def read_message(request):
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        chat_group = Chat_group.objects.get(pk = data['pk'])
+        chat_group.people_read.add(request.user)
+        return JsonResponse({
+            'message':'success'
+        },safe=False,status=200)
+    return JsonResponse({
+        'error' : 'PUT method required'
     },safe=False,status=404)

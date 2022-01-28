@@ -12,7 +12,7 @@ class User(AbstractUser):
     state = models.CharField(max_length=100, blank=True,null=True)
 
 class Folder(models.Model):
-    owner = models.ForeignKey(User,default="",on_delete=CASCADE,related_name='folder')
+    owner = models.ManyToManyField(User,related_name='folder')
     pk_folder = models.CharField(max_length=400,blank=True,null=True,unique=True)
     title = models.CharField(max_length=200,blank=True,null=True)
     def __str__(self):
@@ -33,7 +33,11 @@ class Chat_group(models.Model):
     title = models.CharField(max_length=200,default="")
     administrator = models.ManyToManyField(User,related_name='my_group')
     member = models.ManyToManyField(User,related_name='others_group',blank=True)
-    
+    people_read = models.ManyToManyField(User,blank=True)
+
+    def already_read(self,user):
+        return user in self.people_read.all()
+            
 
 class Chat_message(models.Model):
     chat_group = models.ForeignKey(Chat_group,default="", on_delete=CASCADE,related_name='chat_message')

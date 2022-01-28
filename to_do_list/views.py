@@ -328,8 +328,6 @@ def register_view(request):
         password = request.POST['password']
         confirmation = request.POST['confirmation']
         if (password != confirmation):
-            print(password)
-            print(confirmation)
             return render(request,'to_do_list/register.html',{
                 'form':register_form(request.POST),
                 'error':'Passwords must match.',
@@ -353,8 +351,9 @@ def register_view(request):
         login(request, user)
 
          #create a folder and note_page as default
-        folder = Folder(title='Main', owner = request.user, pk_folder = 'Main'+request.user.username)
+        folder = Folder(title='Main', pk_folder = 'Main'+request.user.username)
         folder.save()
+        folder.owner.add(request.user)
         page = Page(folder=folder)
         page.save()
         
@@ -376,9 +375,10 @@ def add_note(request):
 @login_required
 def add_folder(request):
     if request.method == 'POST':
-        data = Folder(title=request.POST['title'], owner = request.user, pk_folder = request.POST['title']+request.user.username)
+        data = Folder(title=request.POST['title'], pk_folder = request.POST['title']+request.user.username)
         try:
             data.save()
+            data.owner.add(request.user)
         except:
             return render(request,'to_do_list/index.html',{
                 'folders':request.user.folder.all(),
@@ -390,11 +390,11 @@ def add_folder(request):
 
 def get_note(request):
     note = Page.objects.get(pk=request.GET.get('pk'))
-    if note.folder.owner.pk is not request.user.pk:
-        return JsonResponse({
+    if request.user in note.folder.owner.all():
+        return JsonResponse(note.serialize(),status=200,safe=False)
+    return JsonResponse({
             'error':"You don't have the permission.",
         },status=403,safe=False)
-    return JsonResponse(note.serialize(),status=200,safe=False)
     
 def update_note(request):
     data = json.loads(request.body)

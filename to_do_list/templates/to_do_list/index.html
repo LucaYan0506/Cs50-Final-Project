@@ -29,6 +29,9 @@
         <div onclick="show_add_note_view()">
             New page...
         </div>
+        <div onclick="show_add_note_view()">
+            Delete folder...
+        </div>
         <a href="#"><div>Profile</div></a>
         <a href={% url 'chat' %}><div>Chat</div></a>
         <div style="margin:10px 0px;border-top: 1.5px solid #b8bcc0;width:150px;padding:0px"></div>
@@ -38,11 +41,12 @@
 
 {% block body %}
     <nav class="nav-bar" style="font-size:18px;margin-bottom:25px;">
+        <div class="nav-link" style="float:left;background-color:#e23d32;color:white;padding:5px;" onclick="alert('working in progress')">Delete</div>
 
         <div class="nav-link" style="float:right" onclick="save_btn()">Save</div>
-        <div class="nav-link" style="float:right">Share</div>
+        <div class="nav-link" style="float:right" onclick="alert('working in progress')">Share</div>
         <div class="nav-link" style="float:right" onclick="print_element('.body')">Print</div>
-        <div class="nav-link" style="float:right;">Add</div>
+        <div class="nav-link" style="float:right" onclick="alert('working in progress')">Add</div>
 
         <div style="clear:both"></div>
     </nav>
