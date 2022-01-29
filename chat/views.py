@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 from itertools import chain 
 
-from to_do_list.models import Chat_group,Chat_message
+from .models import Chat_group,Chat_message
 
 # Create your views here.
 
@@ -75,4 +75,23 @@ def read_message(request):
         },safe=False,status=200)
     return JsonResponse({
         'error' : 'PUT method required'
+    },safe=False,status=404)
+
+def get_group_detail(request):
+    if request.user.is_authenticated:
+        chat_group_pk = request.GET.get('pk')
+        if request.user.my_group.filter(pk = chat_group_pk).exists() or request.user.others_group.filter(pk = chat_group_pk).exists():
+            group_detail = Chat_group.objects.get(pk = chat_group_pk)
+            return JsonResponse({
+              'name' : group_detail.title,
+              'admins': group_detail.get_admin(),
+              'members': group_detail.get_members(),
+              'creator':group_detail.creator.username,
+              'created_time' : group_detail.created_time,
+            },safe=False,status=200)
+        return JsonResponse({
+            'error':'You are not allowed',
+        },safe=False,status=403)
+    return JsonResponse({
+        'error':'Login required'
     },safe=False,status=404)

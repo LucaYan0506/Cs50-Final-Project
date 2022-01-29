@@ -1,5 +1,3 @@
-from operator import truediv
-from turtle import ondrag
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.deletion import CASCADE
@@ -27,25 +25,4 @@ class Page(models.Model):
         return {
             'title':self.title,
             'content':self.content
-        }
-
-class Chat_group(models.Model):
-    title = models.CharField(max_length=200,default="")
-    administrator = models.ManyToManyField(User,related_name='my_group')
-    member = models.ManyToManyField(User,related_name='others_group',blank=True)
-    people_read = models.ManyToManyField(User,blank=True)
-
-    def already_read(self,user):
-        return user in self.people_read.all()
-            
-
-class Chat_message(models.Model):
-    chat_group = models.ForeignKey(Chat_group,default="", on_delete=CASCADE,related_name='chat_message')
-    sender = models.ForeignKey(User,default="",on_delete=models.SET_NULL,null=True,related_name='chat_message')
-    message = models.TextField(default="")
-
-    def serialize(self):
-        return{
-            'user':self.sender.username,
-            'message':self.message,
         }

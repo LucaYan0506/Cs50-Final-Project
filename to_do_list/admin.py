@@ -2,7 +2,8 @@ from django.contrib import admin
 
 from chat.views import chat_view
 
-from .models import *
+from to_do_list.models import *
+from chat.models import *
 # Register your models here.
 
 admin.site.register(User)

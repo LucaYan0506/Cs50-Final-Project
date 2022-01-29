@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded',() => {
             receive_message(chat_socket,event)
         }
     })
+
+    if (window.innerWidth < 600){
+        open_close_menu(document.querySelector('.menu #icon'));
+    }
 })
 
 function receive_message(self,event){
@@ -146,12 +150,13 @@ function choose_group(card,pk){
     get_message(pk);
 
     curr_chatSocket = all_chatSocket.get(chat_name);
+
+    if (window.innerWidth < 600){
+        open_close_menu(document.querySelector('.menu #icon'));
+    }
 }
 
 function show_add_chat_view(){
-    if (window.innerWidth < 600)
-        return save_note();
-    
     const view = document.querySelector('#container #create-chat').parentElement;
     view.style.display = "block";   
     view.style.animationName = 'fade-out';
@@ -159,12 +164,84 @@ function show_add_chat_view(){
     view.style.animationFillMode  = 'forwards';
 
 }function show_join_chat_view(){
-    if (window.innerWidth < 600)
-        return save_note();
-    
     const view = document.querySelector('#container #join-chat').parentElement;
     view.style.display = "block";   
     view.style.animationName = 'fade-out';
     view.style.animationDuration = '1s';
     view.style.animationFillMode  = 'forwards';
+}
+
+function show_group_detail_view(){
+    const pk = chat_name.substr(5)
+    fetch(`/chat/get_group_detail?pk=${pk}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        const group_detail_view = document.querySelector('#group-detail');
+
+        const title = document.createElement('h2');
+        title.innerHTML = data.name;
+
+        const description = document.createElement('div');
+        description.id = 'description';
+        description.innerHTML = `Group created by ${data.creator}, on ${data.created_time.substr(0,10)} at ${data.created_time.substr(11,8)}.`;
+
+        const p = document.createElement('p');
+        p.innerHTML = "Members";
+
+        const members = document.createElement('div');
+        members.id = 'members'
+        
+        data.admins.forEach((username) => {
+            const member = document.createElement('div');
+            member.id = 'member';
+
+            const profile_img = document.createElement('img');
+
+            const user = document.createElement('label');
+            user.innerHTML = username;
+            user.id = "username";
+
+            const admin = document.createElement('label');
+            admin.innerHTML = 'Admin';
+            admin.id = "admin";
+
+            member.append(profile_img);
+            member.append(user);
+            member.append(admin);
+
+            members.append(member);
+        })
+
+        data.members.forEach((username) => {
+            const member = document.createElement('div');
+            member.id = 'member';
+
+            const profile_img = document.createElement('img');
+
+            const user = document.createElement('label');
+            user.innerHTML = username;
+            user.id = "username"
+            member.append(profile_img);
+            member.append(user);
+
+            members.append(member);
+        })
+
+        group_detail_view.append(title);
+        group_detail_view.append(description);
+        group_detail_view.append(p);
+        group_detail_view.append(members);
+    })
+
+    const view = document.querySelector('#container #group-detail').parentElement;
+    view.style.display = "block";   
+    view.style.animationName = 'fade-out';
+    view.style.animationDuration = '1s';
+    view.style.animationFillMode  = 'forwards';
+}
+function close_container(self){
+    self.parentElement.parentElement.parentElement.style.animation = 'fade-in';
+    self.parentElement.parentElement.parentElement.style.animationDuration = '1s';
+    self.parentElement.parentElement.parentElement.style.animationFillMode  = 'forwards';
 }

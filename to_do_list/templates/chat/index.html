@@ -35,11 +35,20 @@
     </div>
 
     <div id="chat-box">
-        <div style="height: 20px; padding: 10px 30px;font-weight:bold"></div>
+        <div style="height: 20px; padding: 10px 60px;font-weight:bold; cursor:pointer;" onclick="show_group_detail_view()"></div>
         <div id="chat-content">
         </div>
         <input type="text" placeholder="Type a message" required>
         <button type="button" class="btn btn-outline-dark">Send</button>
+    </div>
+
+    <div id="container" style="position:fixed; left:auto;margin-left: -35px;">
+        <div id="group-detail">
+            <div style="position:absolute;left:0;top:0;width:100%;padding:15px 0px;background-color:#EDEDED">
+                <b style="cursor:pointer;float:right;margin:0 15px" onclick="close_container(this)">X</b>
+                <label style="padding-left:15px">Group Info</label>
+            </div>
+        </div>
     </div>
 
     {% csrf_token %}
