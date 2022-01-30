@@ -519,10 +519,20 @@ body{
     background-color: white; 
 }
 
-#group-detail h2{
+#group-detail #title-container{
+    display: flex;
+    justify-content: center;
     margin-top:50px;
     margin-bottom:10px;
     text-align:center;
+}
+
+#group-detail #title-container h2{
+    word-wrap: break-word;
+    max-width: 230px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 #group-detail #description{
@@ -538,14 +548,14 @@ body{
 }
 
 #members{
-    position: absolute;
+    position: relative;
     left: 0;
-    top:200px;
+    top:0;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     width: 100%;
-    height: calc(100vh - 210px);
+    height: calc(100vh - 240px);
 }
 
 #member{
@@ -560,23 +570,44 @@ body{
 
 #member #username{
     padding:10px 0;
+
     word-wrap: break-word;
     max-width: 230px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+
+    margin-right: auto;
 }
 
 #member #admin{
-    right: 0px;
-    position: absolute;
     margin: 10px;
     background: #95f28e;
+    padding:0 2px;
+}
+
+#member #kick{
+    cursor: pointer;
+    margin:10px;
+    margin-left: 0;
+    display: none;
+    background: #ff594b;
     padding: 2px;
 }
+
 
 #member img{
     content: url("/media/profile.png");
     width:40px;
     border-radius:45px;
+}
+
+#group-detail #leave{
+    cursor: pointer;
+    padding:8px;
+    color: #fff;
+    font-weight: 700;
+    background-color: #dc3545;
+    border: 1px solid #dc3545;
+    border-radius: 0.25rem;
 }

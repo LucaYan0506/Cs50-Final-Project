@@ -18,6 +18,22 @@ document.addEventListener('DOMContentLoaded',() => {
     }
 })
 
+function kick_member(username){
+    alert(`${username} is kicked`);
+}
+
+function leave(){
+    alert('You left this group.')
+}
+
+function promote_member(username){
+    alert(`You promoted ${username} to Admin`)
+}
+
+function save_title(title){
+    alert('Saved');
+}
+
 function receive_message(self,event){
     let pk = self.url.substr(self.url.search('note_')+ 5);
     pk = pk.substr(0,pk.length - 1)
@@ -176,11 +192,38 @@ function show_group_detail_view(){
     fetch(`/chat/get_group_detail?pk=${pk}`)
     .then(response => response.json())
     .then(data => {
-        console.log(data)
         const group_detail_view = document.querySelector('#group-detail');
 
-        const title = document.createElement('h2');
+        //clear group_detail_view
+        while(group_detail_view.childElementCount > 1){
+            group_detail_view.lastChild.remove();
+        }
+
+        const title_container = document.createElement('div');
+        title_container.id="title-container"
+        const title = document.createElement('h2')
+        title.style.margin = '0 10px';
         title.innerHTML = data.name;
+        title_container.append(title);
+
+        if (data.Im_admin == true){
+            const edit_title = document.createElement('img');
+            edit_title.src = 'https://img.icons8.com/ios-glyphs/20/000000/edit--v1.png';
+            edit_title.style.marginLeft = '5px';
+            edit_title.style.marginTop = '7px';
+            edit_title.style.cursor = 'pointer';
+            edit_title.style.height = '20px';
+            edit_title.style.width = '20px';
+            edit_title.onclick = () => {
+                title.contentEditable="true";
+                title.focus()
+            }
+
+            title.onkeydown = () =>{
+                save_title(title);
+            }
+            title_container.append(edit_title);
+        }
 
         const description = document.createElement('div');
         description.id = 'description';
@@ -191,24 +234,48 @@ function show_group_detail_view(){
 
         const members = document.createElement('div');
         members.id = 'members'
-        
+
         data.admins.forEach((username) => {
             const member = document.createElement('div');
             member.id = 'member';
 
             const profile_img = document.createElement('img');
 
-            const user = document.createElement('label');
-            user.innerHTML = username;
-            user.id = "username";
+            const user_lbl = document.createElement('label');
+            user_lbl.innerHTML = username;
+            user_lbl.id = "username";
 
             const admin = document.createElement('label');
             admin.innerHTML = 'Admin';
             admin.id = "admin";
-
+   
             member.append(profile_img);
-            member.append(user);
+            member.append(user_lbl);
             member.append(admin);
+
+            if (data.Im_admin == true){
+                const kick = document.createElement('label');
+                kick.id= 'kick';
+                if (username == user){
+                    kick.innerHTML = 'Leave';
+                    kick.onclick = () => {
+                        leave();
+                    }
+                }else{
+                    kick.innerHTML = 'Kick';
+                    kick.onclick = () => {
+                        kick_member(username);
+                    }
+                }
+               
+                member.append(kick);
+                member.onmouseover = () => {
+                    kick.style.display = 'block';
+                }
+                member.onmouseleave = () => {
+                    kick.style.display = 'none';
+                }
+            }
 
             members.append(member);
         })
@@ -219,19 +286,63 @@ function show_group_detail_view(){
 
             const profile_img = document.createElement('img');
 
-            const user = document.createElement('label');
-            user.innerHTML = username;
-            user.id = "username"
+            const user_lbl = document.createElement('label');
+            user_lbl.innerHTML = username;
+            user_lbl.id = "username"
             member.append(profile_img);
-            member.append(user);
+            member.append(user_lbl);
+
+            if (data.Im_admin == true){
+                const kick = document.createElement('label');
+                kick.id= 'kick';
+                if (username == user){
+                    kick.innerHTML = 'Leave';
+                    kick.onclick = () => {
+                        leave();
+                    }
+                }else{
+                    kick.innerHTML = 'Kick';
+                    kick.onclick = () => {
+                        kick_member(username);
+                    }
+                }
+               
+                const promote = document.createElement('label');
+                promote.id = 'admin';
+                promote.style.cursor = 'pointer';
+                promote.style.display = 'none';
+                promote.innerHTML = 'Promote';
+                promote.onclick = () => {
+                    promote_member(username);
+                }
+
+                member.append(promote)
+                member.append(kick);
+                member.onmouseover = () => {
+                    kick.style.display = 'block';
+                    promote.style.display = 'block';
+                }
+                member.onmouseleave = () => {
+                    kick.style.display = 'none';
+                    promote.style.display = 'none'
+                }
+            }
 
             members.append(member);
         })
 
-        group_detail_view.append(title);
+        const leave_btn = document.createElement('button');
+        leave_btn.id = 'leave';
+        leave_btn.innerHTML = 'Leave';
+        leave_btn.onclick = () => {
+            leave();
+        }
+
+        group_detail_view.append(title_container);
         group_detail_view.append(description);
         group_detail_view.append(p);
         group_detail_view.append(members);
+        group_detail_view.append(leave_btn);
     })
 
     const view = document.querySelector('#container #group-detail').parentElement;
@@ -241,6 +352,7 @@ function show_group_detail_view(){
     view.style.animationFillMode  = 'forwards';
 }
 function close_container(self){
+    console.log(self);
     self.parentElement.parentElement.parentElement.style.animation = 'fade-in';
     self.parentElement.parentElement.parentElement.style.animationDuration = '1s';
     self.parentElement.parentElement.parentElement.style.animationFillMode  = 'forwards';

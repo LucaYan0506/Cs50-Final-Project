@@ -88,6 +88,7 @@ def get_group_detail(request):
               'members': group_detail.get_members(),
               'creator':group_detail.creator.username,
               'created_time' : group_detail.created_time,
+              'Im_admin' : request.user in group_detail.administrator.all()
             },safe=False,status=200)
         return JsonResponse({
             'error':'You are not allowed',
