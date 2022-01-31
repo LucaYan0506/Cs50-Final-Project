@@ -2,7 +2,9 @@ import json
 from django.urls.base import reverse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
-from itertools import chain 
+from itertools import chain
+
+from to_do_list.models import User 
 
 from .models import Chat_group,Chat_message
 
@@ -96,3 +98,46 @@ def get_group_detail(request):
     return JsonResponse({
         'error':'Login required'
     },safe=False,status=404)
+
+
+def admin(request):
+    if (request.GET.get('group_pk')):
+        chat_group = Chat_group.objects.get(pk = request.GET.get('group_pk'))
+        if (request.user in chat_group.administrator.all() or request.user.username == request.GET.get('member')):
+            if request.GET.get('action'):
+                action = request.GET.get('action')
+                if action == 'rename':
+                    if request.method == 'POST':
+                        chat_group.title = request.POST['newTitle']
+                        chat_group.save()
+                    return JsonResponse({
+                        'error':'POST method required'
+                    },safe=False)
+                if request.GET.get('member'):
+                    member = User.objects.get(username = request.GET.get('member'))
+                    if action == 'promote':
+                        chat_group.administrator.add(member)
+                        chat_group.member.remove(member)
+                    elif action == 'kick':
+                        chat_group.administrator.remove(member)
+                        chat_group.member.remove(member)
+                    if action != 'promote' and action != 'kick':
+                        action = 'unknown'
+                    return JsonResponse({
+                        'message':'Success',
+                        'action':action,
+                        'member': member.username,
+                    },safe=False,status=200)
+
+                return JsonResponse({
+                    'error':'member missed',
+                },safe=False,status=404)
+            return JsonResponse({
+                'error':'action missed'
+            },safe=False,status=404)
+        return JsonResponse({
+            'error':'You are not allowed',
+        },safe=False,status=403)
+    return JsonResponse({
+        'error':'group_pk missed'
+    },safe=False,status=404)    

@@ -555,7 +555,7 @@ body{
     flex-direction: column;
     overflow-y: auto;
     width: 100%;
-    height: calc(100vh - 240px);
+    height: calc(100vh - 260px);
 }
 
 #member{

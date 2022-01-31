@@ -19,15 +19,30 @@ document.addEventListener('DOMContentLoaded',() => {
 })
 
 function kick_member(username){
-    alert(`${username} is kicked`);
+    pk = chat_name.substring(5);
+    fetch(`/chat/admin/?group_pk=${pk}&action=kick&member=${username}`)
+    .then(() => {
+        alert(`${username} is kicked`); 
+        location.reload();
+    })
 }
 
 function leave(){
-    alert('You left this group.')
+    pk = chat_name.substring(5);
+    fetch(`/chat/admin/?group_pk=${pk}&action=kick&member=${user}`)
+    .then(() => {
+        alert('You left this group.')
+        location.reload();
+    })
 }
 
 function promote_member(username){
-    alert(`You promoted ${username} to Admin`)
+    pk = chat_name.substring(5);
+    fetch(`/chat/admin/?group_pk=${pk}&action=promote&member=${username}`)
+    .then(() => {
+        alert(`You promoted ${username} to Admin`);
+        location.reload();
+    })
 }
 
 function save_title(title){
@@ -335,6 +350,7 @@ function show_group_detail_view(){
         leave_btn.id = 'leave';
         leave_btn.innerHTML = 'Leave';
         leave_btn.onclick = () => {
+            console.log('success')
             leave();
         }
 

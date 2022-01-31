@@ -10,4 +10,5 @@ urlpatterns = [
     path('get_message/<int:chat_group_pk>/',views.get_message,name="get_message"),
     path('read_message/',views.read_message,name="read_message"),
     path('get_group_detail/',views.get_group_detail,name="get_group_detail"),
+    path('admin/',views.admin, name="admin")
 ]
