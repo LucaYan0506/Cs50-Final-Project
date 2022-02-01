@@ -399,7 +399,6 @@ def get_note(request):
 def update_note(request):
     data = json.loads(request.body)
     page = Page.objects.get(pk = data['pk'])
-
     if request.user in page.folder.owner.all():
         page.title = data['title'].replace('<br>', '')
         page.content = data['content']
@@ -415,10 +414,38 @@ def delete_note(request):
     data = json.loads(request.body)
     page = Page.objects.get(pk = data['pk'])
     if request.user in page.folder.owner.all():
-        page.objects.delete()
+        page.delete()
         return JsonResponse({
             'message' : 'Success',
         },safe=False, status=200)
     return JsonResponse({
         'error' : "You don't have the permission"
+    },safe=False,status=403)
+
+def delete_folder(request):
+    data = json.loads(request.body)
+    folder = Folder.objects.get(pk = data['pk'])
+    if request.user in folder.owner.all():
+        folder.delete()
+        return JsonResponse({
+            'message' : 'Success',
+        },safe=False, status=200)
+    return JsonResponse({
+        'error' : "You don't have the permission"
+    },safe=False,status=403)
+
+def share_folder(request):
+    if request.GET.get('pk'):
+        folder = Page.objects.get(pk = request.GET.get('pk')).folder
+        owner = []
+        for user in folder.owner.all():
+            owner.append(user.username)
+        return JsonResponse({
+            'title':folder.title,
+            'owner': owner
+        },safe=False,status=200)
+    elif request.method == 'POST':
+        pass
+    return JsonResponse({
+        'error' : "Miss post method or correct parameter"
     },safe=False,status=403)

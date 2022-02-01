@@ -74,6 +74,28 @@ function show_add_folder_view(){
 
 function show_share_view(){
     const view = document.querySelector('#container #share').parentElement;
+    fetch(`share_folder?pk=${curr_page_pk}`)
+    .then(response => response.json())
+    .then((data) => {
+        document.querySelector('#container #share #title').innerHTML = "Folder: " + data.title;
+        const member = document.querySelector('#container #share #shared-with');
+        member.innerHTML = "";
+        data.owner.forEach(user => {
+            if (member.innerHTML != ""){
+                member.innerHTML += ', '
+            }
+            member.innerHTML += user;
+        })
+    })
+
+    view.style.display = "block";   
+    view.style.animationName = 'fade-out';
+    view.style.animationDuration = '1s';
+    view.style.animationFillMode  = 'forwards';
+}
+
+function show_modify_folders_view(){
+    const view = document.querySelector('#container #modify-folder').parentElement;
     view.style.display = "block";   
     view.style.animationName = 'fade-out';
     view.style.animationDuration = '1s';
@@ -276,11 +298,43 @@ function print_element(elem){
     document.head.removeChild(styleSheet);
 }
 
-document.querySelector('#dropmenu').onclick = () =>{ 
-    const user_container = document.querySelector('#users-container');
-    if (user_container.style.display == 'none'){
-        user_container.style.display = 'flex';
-    }else{
-        user_container.style.display = 'none';
+document.querySelectorAll('#customize-select').forEach(elem => {
+    elem.childNodes[1].onclick = () =>{ 
+        const user_container = elem.childNodes[4];
+        if (user_container.style.display == 'none'){
+            user_container.style.display = 'flex';
+        }else{
+            user_container.style.display = 'none';
+        }
+    }
+})
+
+function delete_note(){
+    let isExecuted = confirm("Are you sure to delete this note?");
+    if (isExecuted){
+        fetch("/delete_note/", { 
+            method: 'POST',
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+            body:JSON.stringify({
+                'pk':curr_page_pk,
+            }),
+            mode: 'same-origin' // Do not send CSRF token to another domain.
+        })
+        .then(() => {location.reload()})
+    }
+}
+
+function delete_folder(pk){
+    let isExecuted = confirm("Are you sure to delete this folder and all page in the folder?");
+    if (isExecuted){
+        fetch("/delete_note/", { 
+            method: 'POST',
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+            body:JSON.stringify({
+                'pk':pk,
+            }),
+            mode: 'same-origin' // Do not send CSRF token to another domain.
+        })
+        .then(() => {location.reload()})
     }
 }

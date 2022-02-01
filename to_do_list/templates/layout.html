@@ -69,19 +69,23 @@
                 <label for="title" style="display:inline-block;margin: 0.5rem;">Name</label><br>
                 <input type="text" class="form-control" id="title" name="title" placeholder="Enter name of the chat"><br>
                 <label for="title" style="display:inline-block;margin: 0.5rem;">Members</label><br>
-                <label class="form-control" id="dropmenu">Select...</label><br>
-                <div style="display:none;max-width: 400px;" id ="users-container">
-                    <ul style="list-style-type:none; padding-right: 20px;padding-left:0px;margin:0px;">
-                        {% for user in all_users %}
-                            {% if user != request.user %}
-                                <li style="display:block ruby">
-                                    <input type="checkbox" name="users" id="user{{user.pk}}" value="{{user.pk}}" />
-                                    <label style="margin-right: 15px;" class="form-check-label" for="user{{user.pk}}">{{user}}</label>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                       
-                    </ul>
+                <div id="customize-select">
+
+                    <label class="form-control" id="dropmenu">Select...</label><br>
+                    <div style="display:none;max-width: 400px;" id ="users-container">
+                        <ul style="list-style-type:none;padding-left:0px;margin:0px;">
+                            {% for user in all_users %}
+                                {% if user != request.user %}
+                                    <li style="display:block ruby">
+                                        <input type="checkbox" name="users" id="user{{user.pk}}" value="{{user.pk}}" />
+                                        <label style="margin-right: 15px;" class="form-check-label" for="user{{user.pk}}">{{user}}</label>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                           
+                        </ul>
+                    </div>
+
                 </div>
                 <button id="blue-btn">Create</button>
             </form>
@@ -96,6 +100,30 @@
                 <input id="form-input" style="padding: 0.375rem 0rem;" type="text" name="pk" placeholder="Chat id number">
                 <button id="blue-btn" style="padding: 0.375rem 0rem;width:35%">Join</button>
             </form>
+        </div>
+    </div>
+
+    <div id="container">
+        <div id="modify-folder">
+
+            <div id="customize-select">
+                <label class="form-control" id="dropmenu" style="margin:0">Select folder...</label><br>
+                <div style="display:none;max-width: 400px;" id ="users-container">
+                    <ul style="list-style-type:none;margin:0px;padding-left:0">
+                       <li>Main</li>
+                       <li>Main</li>
+                       <li>MainMain</li>
+                       <li>MainMainMainMain</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p style="margin-bottom:0px">Rename folder</p>
+            <input type="text" id="rename" value="Main" style="font-size:18px">
+
+            <button id="blue-btn">Rename</button>
+            <button id="blue-btn" style="background:red;border:red;">Delete</button>
+
         </div>
     </div>
 

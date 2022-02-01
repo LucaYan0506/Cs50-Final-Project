@@ -218,6 +218,7 @@ body{
 }
 
 #dropmenu{
+    user-select: none;
     cursor: pointer;
     margin-left:8px;
     padding:5px;
@@ -237,6 +238,13 @@ body{
     position: absolute;
 }
 
+#users-container ul li{
+    padding:0 10px;
+}
+
+#users-container ul li:hover{
+    background-color: gainsboro;
+}
 
 .nav-bar{
     font-size:14px
@@ -575,6 +583,7 @@ body{
 #member #username{
     padding:10px 0;
 
+    /*trunc the sentence*/
     word-wrap: break-word;
     max-width: 230px;
     white-space: nowrap;
@@ -616,13 +625,38 @@ body{
     border-radius: 0.25rem;
 }
 
-#share{
+#share,#modify-folder{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     top: calc(45% - 110px);
     margin:0 auto;
-    width: 180px;
-    height: 85px;
+    width: 360px;
+    max-height: 300px;
     padding:10px;
     background-color: white;  
     border-radius: .375rem;
+}
+
+#share #search-bar, #modify-folder #rename{
+    width: 95%;
+    border: transparent;
+    border-bottom: solid 1px cornflowerblue;
+    outline: none;
+    margin-bottom: 10px;
+}
+
+#share #shared-with{
+    /*trunc the sentence*/
+    word-wrap: break-word;
+    max-width: 340px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    margin: 5px 0;
+    color: gray;
+    font-size: 14px;
 }

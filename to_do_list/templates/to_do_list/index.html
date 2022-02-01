@@ -29,8 +29,8 @@
         <div onclick="show_add_note_view()">
             New page...
         </div>
-        <div onclick="show_add_note_view()">
-            Delete folder...
+        <div onclick="show_modify_folders_view()">
+            Modify folders...
         </div>
         <a href={% url 'chat' %}><div>Chat</div></a>
         <div style="margin:10px 0px;border-top: 1.5px solid #b8bcc0;width:150px;padding:0px"></div>
@@ -40,7 +40,7 @@
 
 {% block body %}
     <nav class="nav-bar" style="font-size:18px;margin-bottom:25px;">
-        <div class="nav-link" style="float:left;background-color:#e23d32;color:white;padding:5px;margin-left:50px" onclick="alert('working in progress')">Delete</div>
+        <div class="nav-link" style="float:left;background-color:#e23d32;color:white;padding:5px;margin-left:50px" onclick="delete_note()">Delete</div>
 
         <div class="nav-link" style="float:right" onclick="save_btn()">Save</div>
         <div class="nav-link" style="float:right" onclick="show_share_view()">Share</div>
@@ -57,26 +57,17 @@
 
     <div id="container" style="position:absolute;left:auto;margin-left:-35px;margin-top:-8px;padding-right:43px;padding-bottom:21px">
         <div id="share">
-            <form action="{% url 'create_chat' %}" method="post">
-                {% csrf_token %}
-                <b>Share</b><br>
-                <label style="display:inline-block;margin: 0.5rem;margin-bottom:14px;">Page1</label><br>
-                <label class="form-control" id="dropmenu">Share with...</label>
-                <div style="display:none;max-width: 165px;border-radius:0.375rem" id ="users-container">
-                    <ul style="list-style-type:none; padding-right: 20px;padding-left:0px;margin:0px;">
-                        {% for user in all_users %}
-                            {% if user != request.user %}
-                                <li style="display:block ruby">
-                                    <input type="checkbox" name="users" id="user{{user.pk}}" value="{{user.pk}}" />
-                                    <label style="margin-right: 15px;" class="form-check-label" for="user{{user.pk}}">{{user}}</label>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                       
-                    </ul>
-                </div>
-                <button id="blue-btn" style="margin-top:-6px">Share</button>
-            </form>
+            <b>Share</b><br>
+            <label id="title" style="display:inline-block;margin-bottom:14px;color:gray"></label><br>
+            <input id="search-bar" placeholder="Share with" onfocus="" onblur="">
+            <button id="blue-btn" style="margin-bottom:10px;cursor:pointer">Share</button>
+            <div style="clear:both"></div>
+
+            <hr style="border:transparent; border-top:solid 1px #6f707029;margin-left:-10px;padding-right:20px;width:100%">
+            <b>Shared with</b>
+            <div>
+                <p id="shared-with">Lucayan</p>
+            </div>
         </div>
     </div>
 
