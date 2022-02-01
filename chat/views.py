@@ -1,8 +1,10 @@
 import json
+from xml.etree.ElementTree import tostring
 from django.urls.base import reverse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 from itertools import chain
+import datetime
 
 from to_do_list.models import User 
 
@@ -34,7 +36,7 @@ def join_chat(request):
 def create_chat(request):
     if request.user.is_authenticated and request.method == 'POST':
         members = request.POST.getlist('users')
-        chat_group = Chat_group(title = request.POST['title'])
+        chat_group = Chat_group(title = request.POST['title'],creator=request.user,created_time=datetime.datetime.now())
         chat_group.save()
         chat_group.administrator.add(request.user)
         chat_group.member.set(members)
@@ -101,27 +103,35 @@ def get_group_detail(request):
 
 
 def admin(request):
+    #make sure that group_uk is called
     if (request.GET.get('group_pk')):
         chat_group = Chat_group.objects.get(pk = request.GET.get('group_pk'))
+        #make sure the he is an admin or he want leave the group
         if (request.user in chat_group.administrator.all() or request.user.username == request.GET.get('member')):
+            #make sure that action is called
             if request.GET.get('action'):
                 action = request.GET.get('action')
+                #if action is "rename", rename chat_group
                 if action == 'rename':
                     if request.method == 'POST':
-                        chat_group.title = request.POST['newTitle']
+                        chat_group.title = json.loads(request.body)['newTitle']
                         chat_group.save()
                     return JsonResponse({
                         'error':'POST method required'
                     },safe=False)
+                #make sure that member is called
                 if request.GET.get('member'):
                     member = User.objects.get(username = request.GET.get('member'))
+                    #promote member to admin
                     if action == 'promote':
                         chat_group.administrator.add(member)
                         chat_group.member.remove(member)
+                    #kick the member
                     elif action == 'kick':
                         chat_group.administrator.remove(member)
                         chat_group.member.remove(member)
-                    if action != 'promote' and action != 'kick':
+                    # action is unknown
+                    else:
                         action = 'unknown'
                     return JsonResponse({
                         'message':'Success',

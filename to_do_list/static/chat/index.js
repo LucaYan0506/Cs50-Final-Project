@@ -46,7 +46,17 @@ function promote_member(username){
 }
 
 function save_title(title){
-    alert('Saved');
+    title = title.replace('<br>','')
+    pk = chat_name.substring(5);
+    fetch(`/chat/admin/?group_pk=${pk}&action=rename&member=${username}`)
+    fetch(`/chat/admin/?group_pk=${pk}&action=rename`,{ 
+        method: 'POST',
+        headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+        body:JSON.stringify({
+            'newTitle' : title,
+        }),
+        mode: 'same-origin' // Do not send CSRF token to another domain.
+    })
 }
 
 function receive_message(self,event){
@@ -182,6 +192,8 @@ function choose_group(card,pk){
 
     curr_chatSocket = all_chatSocket.get(chat_name);
 
+    close_container(document.querySelector('#group-detail b'));
+
     if (window.innerWidth < 600){
         open_close_menu(document.querySelector('.menu #icon'));
     }
@@ -235,7 +247,7 @@ function show_group_detail_view(){
             }
 
             title.onkeydown = () =>{
-                save_title(title);
+                save_title(title.innerHTML);
             }
             title_container.append(edit_title);
         }
@@ -368,7 +380,6 @@ function show_group_detail_view(){
     view.style.animationFillMode  = 'forwards';
 }
 function close_container(self){
-    console.log(self);
     self.parentElement.parentElement.parentElement.style.animation = 'fade-in';
     self.parentElement.parentElement.parentElement.style.animationDuration = '1s';
     self.parentElement.parentElement.parentElement.style.animationFillMode  = 'forwards';

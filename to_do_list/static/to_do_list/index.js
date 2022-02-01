@@ -71,6 +71,15 @@ function show_add_folder_view(){
     view.style.animationFillMode  = 'forwards';
 }
 
+
+function show_share_view(){
+    const view = document.querySelector('#container #share').parentElement;
+    view.style.display = "block";   
+    view.style.animationName = 'fade-out';
+    view.style.animationDuration = '1s';
+    view.style.animationFillMode  = 'forwards';
+}
+
 document.querySelectorAll('#container').forEach(elem => {
     elem.addEventListener('click',(event) => {
         if (event.target === elem){

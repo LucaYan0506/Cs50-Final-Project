@@ -399,9 +399,26 @@ def get_note(request):
 def update_note(request):
     data = json.loads(request.body)
     page = Page.objects.get(pk = data['pk'])
-    page.title = data['title'].replace('<br>', '')
-    page.content = data['content']
-    page.save()
+
+    if request.user in page.folder.owner.all():
+        page.title = data['title'].replace('<br>', '')
+        page.content = data['content']
+        page.save()
+        return JsonResponse({
+            'message':page.title
+        },status=202)
     return JsonResponse({
-        'message':page.title
-    },status=202)
+        'error' : "You don't have the permission"
+    },safe=False,status=403)
+
+def delete_note(request):
+    data = json.loads(request.body)
+    page = Page.objects.get(pk = data['pk'])
+    if request.user in page.folder.owner.all():
+        page.objects.delete()
+        return JsonResponse({
+            'message' : 'Success',
+        },safe=False, status=200)
+    return JsonResponse({
+        'error' : "You don't have the permission"
+    },safe=False,status=403)
