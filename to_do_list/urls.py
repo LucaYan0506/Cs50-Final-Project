@@ -17,4 +17,5 @@ urlpatterns = [
     path('delete_note/',views.delete_note,name="delete_note"),
     path('delete_folder/',views.delete_folder,name="delete_folder"),
     path('share_folder/',views.share_folder,name="share_folder"),
+    path('search_user/',views.search_user,name="search_user"),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

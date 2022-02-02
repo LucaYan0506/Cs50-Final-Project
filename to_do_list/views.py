@@ -449,3 +449,12 @@ def share_folder(request):
     return JsonResponse({
         'error' : "Miss post method or correct parameter"
     },safe=False,status=403)
+
+def search_user(request):
+    if request.GET.get('prefix'):
+        users = []
+        for user in User.objects.filter(username__startswith=request.GET.get('prefix')):
+            users.append(user.username)
+    return JsonResponse({
+        'users': users 
+    })
