@@ -451,10 +451,11 @@ def share_folder(request):
     },safe=False,status=403)
 
 def search_user(request):
+    users = []
+
     if request.GET.get('prefix'):
-        users = []
         for user in User.objects.filter(username__startswith=request.GET.get('prefix')):
             users.append(user.username)
     return JsonResponse({
-        'users': users 
+        'users': users or 'Empty'
     })

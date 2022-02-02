@@ -338,3 +338,62 @@ function delete_folder(pk){
         .then(() => {location.reload()})
     }
 }
+
+function show_search_user_result_view(self){
+    if (self.value == ''){
+        document.querySelector('#search-user-result').style.display = 'none';
+        return;
+    }
+    fetch(`/search_user/?prefix=${self.value}`)
+    .then(response => response.json())
+    .then(data => {
+        const result_view = document.querySelector('#search-user-result')
+
+        while(result_view.childElementCount > 0){
+            result_view.removeChild(result_view.lastChild);
+        }
+
+        result_view.innerHTML = '';
+
+        if (data.users == ''){
+            result_view.style.justifyContent = 'center';
+            result_view.style.textAlign  = 'center';
+            result_view.innerHTML = 'Empty';
+        }else{
+            result_view.style.justifyContent = '';
+            result_view.style.textAlign  = '';
+
+            data.users.forEach(elem => {
+                const div = document.createElement('div');
+                div.innerHTML = elem;
+                div.onclick = () => {
+                    add_this_user(elem,div)
+                }
+                result_view.append(div);
+                })
+        }
+
+        result_view.style.display = 'flex';
+    })
+    
+}
+
+function add_this_user(username,self){
+    const new_user = document.createElement('div');
+    new_user.innerHTML = username;
+
+    const delete_btn = document.createElement('b');
+    delete_btn.innerHTML = 'X'
+    delete_btn.style.cursor = 'pointer';
+    delete_btn.style.marginLeft = '10px';
+    delete_btn.onclick = () => {
+        self.style = "";
+        new_user.remove();
+    }
+    new_user.append(delete_btn);
+    document.querySelector('#share-with-following-users').append(new_user);
+
+    self.style = "pointer-events: none;";
+    self.style.background = "#a9a9a94f";
+    self.style.color = 'gray';
+}

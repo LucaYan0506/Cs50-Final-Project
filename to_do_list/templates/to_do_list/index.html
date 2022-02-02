@@ -59,11 +59,11 @@
         <div id="share">
             <b>Share</b>
             <label id="title" style="display:inline-block;margin-bottom:14px;color:gray"></label>
-            <input id="search-bar" placeholder="Share with" onfocus="" onblur="">
-            <div id="search-user-result">
-                    <div>Lucayan</div>
-                    <div>User1</div>
-                    <div>User2</div>
+            <div id="share-with-following-users"></div>
+            <input id="search-bar" placeholder="Share with" onkeyup="show_search_user_result_view(this)" onfocus="show_search_user_result_view(this)">
+            <div style="display:block;max-height:100px">
+                <div id="search-user-result">
+                </div>
             </div>
             <button id="blue-btn" style="margin-bottom:10px;cursor:pointer">Share</button>
             <div style="clear:both"></div>
