@@ -71,29 +71,6 @@ function show_add_folder_view(){
     view.style.animationFillMode  = 'forwards';
 }
 
-
-function show_share_view(){
-    const view = document.querySelector('#container #share').parentElement;
-    fetch(`share_folder?pk=${curr_page_pk}`)
-    .then(response => response.json())
-    .then((data) => {
-        document.querySelector('#container #share #title').innerHTML = "Folder: " + data.title;
-        const member = document.querySelector('#container #share #shared-with');
-        member.innerHTML = "";
-        data.owner.forEach(user => {
-            if (member.innerHTML != ""){
-                member.innerHTML += ', '
-            }
-            member.innerHTML += user;
-        })
-    })
-
-    view.style.display = "block";   
-    view.style.animationName = 'fade-out';
-    view.style.animationDuration = '1s';
-    view.style.animationFillMode  = 'forwards';
-}
-
 function show_modify_folders_view(){
     const view = document.querySelector('#container #modify-folder').parentElement;
     view.style.display = "block";   
@@ -170,6 +147,13 @@ function open_close_menu(icon){
 let prev_card;
 let curr_page_pk;
 function choose_page(card,pk,onpopstate = false){
+    //close any windows (if there is) and clear (#share-with-following-users)
+    document.querySelector('#container').click()
+    while(document.querySelector('#share-with-following-users').childElementCount > 0){
+        document.querySelector('#share-with-following-users').removeChild(document.querySelector('#share-with-following-users').lastElementChild)
+    }
+    document.querySelector('#container #share #search-bar').value = '';
+
     //change the background of the card in the menu
     if (prev_card)
         prev_card.style.background = '';
@@ -310,7 +294,7 @@ document.querySelectorAll('#customize-select').forEach(elem => {
 })
 
 function delete_note(){
-    let isExecuted = confirm("Are you sure to delete this note?");
+    let isExecuted = confirm("Are you sure to delete this note?\nNote: if you aren't the person who created this folder you won't delete this page, but you won't be able to access this folder anymore");
     if (isExecuted){
         fetch("/delete_note/", { 
             method: 'POST',
@@ -339,12 +323,46 @@ function delete_folder(pk){
     }
 }
 
+let owners = new Set();
+let new_owners = new Set();
+
+function show_share_view(){
+   owners = new Set()
+   new_owners = new Set();
+
+   //clear #share-with-following-users
+   while(document.querySelector('#share-with-following-users').childElementCount > 0){
+    document.querySelector('#share-with-following-users').removeChild(document.querySelector('#share-with-following-users').lastElementChild)
+    }
+
+   const view = document.querySelector('#container #share').parentElement;
+   fetch(`share_folder?pk=${curr_page_pk}`)
+   .then(response => response.json())
+   .then((data) => {
+       document.querySelector('#container #share #title').innerHTML = "Folder: " + data.title;
+       const member = document.querySelector('#container #share #shared-with');
+       member.innerHTML = "";
+       data.owner.forEach(user => {
+           if (member.innerHTML != ""){
+               member.innerHTML += ', '
+           }
+           member.innerHTML += user;
+       })
+   })
+
+   view.style.display = "block";   
+   view.style.animationName = 'fade-out';
+   view.style.animationDuration = '1s';
+   view.style.animationFillMode  = 'forwards';
+   document.querySelector('#container #share #search-bar').focus();
+}
+
 function show_search_user_result_view(self){
     if (self.value == ''){
         document.querySelector('#search-user-result').style.display = 'none';
         return;
     }
-    fetch(`/search_user/?prefix=${self.value}`)
+    fetch(`/search_user/?prefix=${self.value}&page_pk=${curr_page_pk}`)
     .then(response => response.json())
     .then(data => {
         const result_view = document.querySelector('#search-user-result')
@@ -355,22 +373,31 @@ function show_search_user_result_view(self){
 
         result_view.innerHTML = '';
 
-        if (data.users == ''){
+        data.owners.forEach(el => {
+            owners.add(el);
+        })
+
+        result_view.style.justifyContent = '';
+        result_view.style.textAlign  = '';
+
+        let count = 0;
+        data.users.forEach(elem => {
+            if (owners.has(elem) | new_owners.has(elem)){
+                return;
+            }
+            count++;
+            const div = document.createElement('div');
+            div.innerHTML = elem;
+            div.onclick = () => {
+                add_this_user(elem,div)
+            }
+            result_view.append(div);
+        })
+        
+        if (count == 0){
             result_view.style.justifyContent = 'center';
             result_view.style.textAlign  = 'center';
             result_view.innerHTML = 'Empty';
-        }else{
-            result_view.style.justifyContent = '';
-            result_view.style.textAlign  = '';
-
-            data.users.forEach(elem => {
-                const div = document.createElement('div');
-                div.innerHTML = elem;
-                div.onclick = () => {
-                    add_this_user(elem,div)
-                }
-                result_view.append(div);
-                })
         }
 
         result_view.style.display = 'flex';
@@ -379,6 +406,8 @@ function show_search_user_result_view(self){
 }
 
 function add_this_user(username,self){
+    new_owners.add(username);
+
     const new_user = document.createElement('div');
     new_user.innerHTML = username;
 
@@ -387,6 +416,7 @@ function add_this_user(username,self){
     delete_btn.style.cursor = 'pointer';
     delete_btn.style.marginLeft = '10px';
     delete_btn.onclick = () => {
+        new_owners.delete(username);
         self.style = "";
         new_user.remove();
     }
@@ -397,3 +427,45 @@ function add_this_user(username,self){
     self.style.background = "#a9a9a94f";
     self.style.color = 'gray';
 }
+
+function share_btn_click(){
+    let data = []
+    new_owners.forEach(el => {
+       data.push(el);
+    })
+    fetch("/share_folder/", { 
+        method: 'POST',
+        headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+        body:JSON.stringify({
+            'new_owners':data,
+            'page_pk' : curr_page_pk
+        }),
+        mode: 'same-origin' // Do not send CSRF token to another domain.
+    })
+    .then(response => response.json())
+    .then(data => {
+        show_share_view();
+    })
+}
+
+function show_add_view(){
+    const add_view = document.querySelector('#add-view');
+    add_view.style.display = 'block';
+    add_view.style.animationName = 'fade-out';
+    add_view.style.animationDuration = '1s';
+    add_view.style.animationFillMode  = 'forwards';
+}
+
+document.addEventListener('click' , (event) => {
+    const add_view = document.querySelector('#add-view');
+
+    if (event.target != add_view & event.target != document.querySelector('#add') & add_view.style.display == 'block'){
+        add_view.style.animationName = 'fade-in';
+        add_view.style.animationDuration = '1s';
+        add_view.style.animationFillMode  = 'forwards';
+
+        setTimeout(() => {
+            add_view.style.display = 'none';
+        },1000)
+    }
+})

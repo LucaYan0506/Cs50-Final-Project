@@ -39,14 +39,17 @@
 {% endblock menu %}
 
 {% block body %}
-    <nav class="nav-bar" style="font-size:18px;margin-bottom:25px;">
+    <nav class="nav-bar" style="font-size:18px;">
         <div class="nav-link" style="float:left;background-color:#e23d32;color:white;padding:5px;margin-left:50px" onclick="delete_note()">Delete</div>
 
+        <div class="nav-link" id="add" style="float:right" onclick="show_add_view()">Add</div>
         <div class="nav-link" style="float:right" onclick="save_btn()">Save</div>
         <div class="nav-link" style="float:right" onclick="show_share_view()">Share</div>
         <div class="nav-link" style="float:right" onclick="print_element('.body')">Print</div>
-        <div class="nav-link" style="float:right" onclick="alert('working in progress')">Add</div>
-
+        <div id="add-view">
+            <div>Checkbox</div>
+            <div>Table</div>
+        </div>
         <div style="clear:both"></div>
     </nav>
 
@@ -57,7 +60,7 @@
 
     <div id="container" style="position:absolute;left:auto;margin-left:-35px;margin-top:-8px;padding-right:43px;padding-bottom:21px">
         <div id="share">
-            <b>Share</b>
+            <b>Share folder</b>
             <label id="title" style="display:inline-block;margin-bottom:14px;color:gray"></label>
             <div id="share-with-following-users"></div>
             <input id="search-bar" placeholder="Share with" onkeyup="show_search_user_result_view(this)" onfocus="show_search_user_result_view(this)">
@@ -65,7 +68,7 @@
                 <div id="search-user-result">
                 </div>
             </div>
-            <button id="blue-btn" style="margin-bottom:10px;cursor:pointer">Share</button>
+            <button id="blue-btn" style="margin-bottom:10px;cursor:pointer" onclick="share_btn_click()" >Share</button>
             <div style="clear:both"></div>
 
             <hr style="border:transparent; border-top:solid 1px #6f707029;margin-left:-10px;padding-right:20px;width:100%">

@@ -339,7 +339,7 @@ body{
 
 .body #note{
     width:100%;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 200px);
     display:flex;
     flex-direction: column;
     overflow:auto;
@@ -690,4 +690,14 @@ body{
     background-color: paleturquoise;
     margin:10px;
     padding:10px;
+}
+
+#add-view{
+    display: none;
+    width: 100px;
+    height: 50px;
+    background: #80808040;
+    position: fixed;
+    right: 10px;
+    top: 30px;
 }

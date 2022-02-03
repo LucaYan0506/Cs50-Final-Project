@@ -1,3 +1,4 @@
+from importlib.metadata import requires
 import json
 from tkinter.tix import Tree
 from django.forms.widgets import Input, Select
@@ -351,7 +352,7 @@ def register_view(request):
         login(request, user)
 
          #create a folder and note_page as default
-        folder = Folder(title='Main', pk_folder = 'Main'+request.user.username)
+        folder = Folder(title='Main', creator=request.user)
         folder.save()
         folder.owner.add(request.user)
         page = Page(folder=folder)
@@ -375,15 +376,9 @@ def add_note(request):
 @login_required
 def add_folder(request):
     if request.method == 'POST':
-        data = Folder(title=request.POST['title'], pk_folder = request.POST['title']+request.user.username)
-        try:
-            data.save()
-            data.owner.add(request.user)
-        except:
-            return render(request,'to_do_list/index.html',{
-                'folders':request.user.folder.all(),
-                'error': 'Folder already exists'
-            })
+        data = Folder(title=request.POST['title'], creator=request.user)
+        data.save()
+        data.owner.add(request.user)
 
         return HttpResponseRedirect(reverse('index'))
     return HttpResponse('Post method required',status=404)
@@ -414,7 +409,10 @@ def delete_note(request):
     data = json.loads(request.body)
     page = Page.objects.get(pk = data['pk'])
     if request.user in page.folder.owner.all():
-        page.delete()
+        if (request.user == page.folder.creator):
+            page.delete()
+        else:
+            page.folder.owner.remove(request.user)
         return JsonResponse({
             'message' : 'Success',
         },safe=False, status=200)
@@ -426,7 +424,9 @@ def delete_folder(request):
     data = json.loads(request.body)
     folder = Folder.objects.get(pk = data['pk'])
     if request.user in folder.owner.all():
-        folder.delete()
+        folder.owner.remove(request.user)
+        if (request.user == folder.creator):
+            folder.delete()
         return JsonResponse({
             'message' : 'Success',
         },safe=False, status=200)
@@ -435,7 +435,15 @@ def delete_folder(request):
     },safe=False,status=403)
 
 def share_folder(request):
-    if request.GET.get('pk'):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        folder = Page.objects.get(pk = data['page_pk']).folder
+        for owner in data['new_owners']:
+            folder.owner.add(User.objects.get(username=owner))
+        return JsonResponse({
+            'message':'success',
+        },safe=False,status=200)
+    elif request.GET.get('pk'):
         folder = Page.objects.get(pk = request.GET.get('pk')).folder
         owner = []
         for user in folder.owner.all():
@@ -444,18 +452,20 @@ def share_folder(request):
             'title':folder.title,
             'owner': owner
         },safe=False,status=200)
-    elif request.method == 'POST':
-        pass
     return JsonResponse({
         'error' : "Miss post method or correct parameter"
     },safe=False,status=403)
 
 def search_user(request):
     users = []
-
+    owners = []
     if request.GET.get('prefix'):
         for user in User.objects.filter(username__startswith=request.GET.get('prefix')):
             users.append(user.username)
+    if request.GET.get('page_pk'):
+        for owner in Page.objects.get(pk = request.GET.get('page_pk')).folder.owner.all():
+            owners.append(owner.username)
     return JsonResponse({
-        'users': users or 'Empty'
+        'users': users,
+        'owners':owners
     })

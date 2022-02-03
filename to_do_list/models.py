@@ -1,3 +1,4 @@
+from turtle import ondrag
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.deletion import CASCADE
@@ -10,8 +11,8 @@ class User(AbstractUser):
     state = models.CharField(max_length=100, blank=True,null=True)
 
 class Folder(models.Model):
+    creator = models.ForeignKey(User,on_delete=CASCADE,default="",related_name='myfolder')
     owner = models.ManyToManyField(User,related_name='folder')
-    pk_folder = models.CharField(max_length=400,blank=True,null=True,unique=True)
     title = models.CharField(max_length=200,blank=True,null=True)
     def __str__(self):
         return self.title
