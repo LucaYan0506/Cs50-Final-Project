@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded',() => {
         })
         open_close_submenu(submenu)
     }
+
 })
 
 window.onresize = () => {
@@ -72,11 +73,67 @@ function show_add_folder_view(){
 }
 
 function show_modify_folders_view(){
+    const ul = document.querySelector('#container #modify-folder #users-container ul');
+    while (ul.childElementCount > 0){
+        ul.removeChild(ul.firstElementChild);
+    }
+    fetch(`/delete_folder/`)
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(el => {
+            const li = document.createElement('li');
+            li.innerHTML = el['title'];
+            li.style.cursor = 'pointer';
+            li.onclick = () => {
+                document.querySelector('#container #modify-folder #rename').value = el['title']
+                document.querySelector('#container #modify-folder #dropmenu').click()
+                document.querySelector('#container #modify-folder button[name="rename-btn"]').onclick = () =>{rename_folder(el['pk'])}
+                document.querySelector('#container #modify-folder button[name="delete-btn"]').onclick = () =>{delete_folder(el['pk'])}
+            }
+            ul.append(li);
+        })
+        document.querySelector('#container #modify-folder #users-container ul li').click();
+    })
     const view = document.querySelector('#container #modify-folder').parentElement;
     view.style.display = "block";   
     view.style.animationName = 'fade-out';
     view.style.animationDuration = '1s';
     view.style.animationFillMode  = 'forwards';
+}
+
+function rename_folder(pk){
+    const new_title = document.querySelector('#container #modify-folder #rename').value;
+    fetch("/rename_folder/", { 
+        method: 'POST',
+        headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+        body:JSON.stringify({
+            'pk':pk,
+            'title':new_title
+        }),
+        mode: 'same-origin' // Do not send CSRF token to another domain.
+    })
+    .then(response => response.json())
+    .then (data => {
+        location.reload();
+    })
+}
+
+function delete_folder(pk){
+    let isExecuted = confirm("Are you sure to delete this folder and all page in the folder?\nNote: if you aren't the person who created this folder it will delete only for you");
+    if (isExecuted){
+        fetch("/delete_folder/", { 
+            method: 'POST',
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+            body:JSON.stringify({
+                'pk':pk,
+            }),
+            mode: 'same-origin' // Do not send CSRF token to another domain.
+        })
+        .then(response => response.json())
+        .then (data => {
+            location.reload();
+        })
+    }
 }
 
 document.querySelectorAll('#container').forEach(elem => {
@@ -172,6 +229,10 @@ function choose_page(card,pk,onpopstate = false){
         content.innerHTML = data.content; 
         if (onpopstate == false)
             history.pushState({'section':pk},"",`?page=${pk}`);   
+      
+        update_table_function();
+        //click the content (div) to delete extra button on the table
+        document.querySelector('#content').click()
     })
 
     if (window.innerWidth < 600){
@@ -211,10 +272,6 @@ function autosave(note,table){
             'table':table
         }),
         mode: 'same-origin' // Do not send CSRF token to another domain.
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.message);
     })
 }
 
@@ -308,20 +365,6 @@ function delete_note(){
     }
 }
 
-function delete_folder(pk){
-    let isExecuted = confirm("Are you sure to delete this folder and all page in the folder?");
-    if (isExecuted){
-        fetch("/delete_note/", { 
-            method: 'POST',
-            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
-            body:JSON.stringify({
-                'pk':pk,
-            }),
-            mode: 'same-origin' // Do not send CSRF token to another domain.
-        })
-        .then(() => {location.reload()})
-    }
-}
 
 let owners = new Set();
 let new_owners = new Set();
@@ -468,4 +511,136 @@ document.addEventListener('click' , (event) => {
             add_view.style.display = 'none';
         },1000)
     }
+})
+
+function add_checkbox_l1(){
+    document.querySelector('#note #content').innerHTML += '<ul><li></li></ul>'
+    autosave(document.querySelector('#note'))
+}
+
+function add_checkbox_l2(){
+    document.querySelector('#note #content').innerHTML += '<ul><ul><li></li></ul></ul>'
+    autosave(document.querySelector('#note'))
+}
+
+function add_checkbox_l3(){
+    document.querySelector('#note #content').innerHTML += '<ul><ul><ul><li></li></ul></ul></ul>'
+    autosave(document.querySelector('#note'))
+}
+
+function add_table(){
+    let n = prompt("Please enter the number of row", "3");
+    let i = 0;
+    let rows = "";
+    let colomn = "";
+    while (i < n){
+        rows += '<th scope="col"></th>'
+        colomn += '<td></td>'
+        i++;
+    }
+
+
+    const table = document.createElement('table');
+    table.className = 'table';
+    table.innerHTML = `
+    <thead>
+        <tr>
+        <th style="user-select:none" id="delete-table"></th>
+        ${rows}
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <td><b>1</b></td>
+        ${colomn}
+        </tr>
+    </tbody>
+    `
+    document.querySelector('#note #content').append(table);
+    document.querySelector('#note #content').append(document.createElement('br'));
+
+    update_table_function()
+    autosave(document.querySelector('#note'))
+}
+
+function add_button_table(table){
+    //add delete button
+    const delete_btn = document.createElement('button');
+    delete_btn.id = 'delete-btn';
+    delete_btn.innerHTML = 'X';
+    delete_btn.onclick = () => {
+        if (confirm('Are you sure to delete this table')){
+            table.remove();
+            autosave(document.querySelector('#note'))
+        }
+    }
+
+    //add "add_row" button
+    const add_button = document.createElement('button');
+    add_button.id = "add-btn";
+    add_button.innerHTML = 'Add new row';
+
+    add_button.onclick = () => {
+        const tr = document.createElement('tr');
+        let count_field = table.querySelector('thead tr').childElementCount;
+        let count_row = table.querySelector('tbody').childElementCount + 1;
+        let td = "";
+        for (let i = 0; i < count_field - 1; i++){
+            td += `<td></td>`
+        }
+        tr.innerHTML = `<td><b>${count_row}</b></th>` + td;
+
+        table.querySelector('tbody').append(tr)
+        autosave(document.querySelector('#note'))
+    }
+   
+
+
+    table.querySelector('th').innerHTML = "";
+    table.querySelector('th').append(delete_btn);
+    table.querySelector('th').append(add_button);
+}
+
+function remove_button_table(table){
+    const delete_btn = table.querySelector('#delete-btn');
+    const add_button = table.querySelector('#add-btn');
+    if (delete_btn){
+        table.querySelector('th').removeChild(delete_btn);
+    }
+    if (add_button){
+        table.querySelector('th').removeChild(add_button);
+    }
+}
+
+function update_table_function(){
+    //add a 'X' btn and "add new row" button for each table
+    document.querySelectorAll('.table').forEach(table => {
+
+        table.querySelectorAll('tbody tr td').forEach(el => {
+            el.setAttribute('tabindex', 1); 
+            el.onfocus = () =>{
+                add_button_table(table);
+            }
+        })
+        table.querySelectorAll('tbody tr th').forEach(el => {
+            el.setAttribute('tabindex', 1); 
+            el.onfocus = () =>{
+                add_button_table(table);
+            }
+        })
+        table.querySelectorAll('thead tr th').forEach(el => {
+            el.setAttribute('tabindex', 1); 
+            el.onfocus = () =>{
+                add_button_table(table);
+            }
+        })
+    })
+}
+
+document.addEventListener('click',(event) => {
+    if (event.target.nodeName != 'TH' & event.target.nodeName != 'TR' & event.target.nodeName != 'TD' & event.target.nodeName != 'TBODY' & event.target.nodeName != 'TABLE' & event.target.id != 'delete-btn' & event.target.id != 'add-btn'){
+        document.querySelectorAll('.table').forEach(table => {
+            remove_button_table(table);
+        })
+    };
 })

@@ -16,6 +16,13 @@ class Folder(models.Model):
     title = models.CharField(max_length=200,blank=True,null=True)
     def __str__(self):
         return self.title
+
+    def serialize(self):
+        return {
+            'pk': self.pk,
+            'title': self.title
+        }
+
     
 class Page(models.Model):
     folder = models.ForeignKey(Folder,default="",on_delete=CASCADE,related_name='pages')

@@ -30,9 +30,15 @@ function kick_member(username){
 function leave(){
     pk = chat_name.substring(5);
     fetch(`/chat/admin/?group_pk=${pk}&action=kick&member=${user}`)
-    .then(() => {
-        alert('You left this group.')
-        location.reload();
+    .then(response => response.json())
+    .then(data => {
+        if (data.message == 'Success'){
+            alert('You left this group.')
+            location.reload();
+        }else{
+            alert(data.message);
+        }
+
     })
 }
 

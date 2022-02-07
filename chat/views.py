@@ -1,9 +1,9 @@
+from itertools import chain
 import json
 from xml.etree.ElementTree import tostring
 from django.urls.base import reverse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
-from itertools import chain
 import datetime
 
 from to_do_list.models import User 
@@ -128,6 +128,12 @@ def admin(request):
                         chat_group.member.remove(member)
                     #kick the member
                     elif action == 'kick':
+                        if len(chat_group.administrator.all()) == 1 and request.user in chat_group.administrator.all():
+                            return JsonResponse({
+                                'message':"You can't leave the group because you are the only admin in this group",
+                                'action':action,
+                                'member': member.username,
+                            },safe=False,status=404)
                         chat_group.administrator.remove(member)
                         chat_group.member.remove(member)
                     # action is unknown

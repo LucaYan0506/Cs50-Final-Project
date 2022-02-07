@@ -420,19 +420,45 @@ def delete_note(request):
         'error' : "You don't have the permission"
     },safe=False,status=403)
 
+@login_required
 def delete_folder(request):
-    data = json.loads(request.body)
-    folder = Folder.objects.get(pk = data['pk'])
-    if request.user in folder.owner.all():
-        folder.owner.remove(request.user)
-        if (request.user == folder.creator):
-            folder.delete()
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        folder = Folder.objects.get(pk = data['pk'])
+        if request.user in folder.owner.all():
+            folder.owner.remove(request.user)
+            if (request.user == folder.creator):
+                folder.delete()
+            return JsonResponse({
+                'message' : 'Success',
+            },safe=False, status=200)
         return JsonResponse({
-            'message' : 'Success',
-        },safe=False, status=200)
+            'error' : "You don't have the permission"
+        },safe=False,status=403)
+
+    return JsonResponse(
+        [folder.serialize() for folder in request.user.folder.all()]
+    ,safe=False,status=200)
+
+@login_required
+def rename_folder(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        folder = Folder.objects.get(pk = data['pk'])
+        if request.user in folder.owner.all():
+            folder.title = data['title']
+            folder.save()
+            return JsonResponse({
+                'message' : 'Success',
+            },safe=False, status=200)
+        return JsonResponse({
+            'error' : "You don't have the permission"
+        },safe=False,status=403)
+
     return JsonResponse({
-        'error' : "You don't have the permission"
-    },safe=False,status=403)
+        'error' : 'POST method required'
+    }
+    ,safe=False,status=404)
 
 def share_folder(request):
     if request.method == 'POST':
