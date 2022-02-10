@@ -9,7 +9,7 @@
 
     <div id="notes">
         {% for chat_group in chat_groups %}
-            <div id="card" name="note_{{chat_group.pk}}" onclick="choose_group(this,{{chat_group.pk}})">{{chat_group.title}}</div>
+            <div id="card" name="group{{chat_group.pk}}" onclick="choose_group(this,{{chat_group.pk}})">{{chat_group.title}}</div>
         {% endfor %}
     </div>
 

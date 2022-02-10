@@ -1,3 +1,8 @@
+let chat_name = "default";
+let curr_chatSocket;
+let all_chatSocket = new Map();
+let cursor_position;
+
 document.addEventListener('DOMContentLoaded',() => {
     document.querySelector('#user').onclick = () => {
         const submenu = document.querySelector('#sub-menu-user');
@@ -7,26 +12,65 @@ document.addEventListener('DOMContentLoaded',() => {
         })
         open_close_submenu(submenu)
     }
+    document.querySelectorAll('#card').forEach((card) => {
+        chat_name = card.getAttribute("name");
+        const chat_socket = new WebSocket("ws://" + window.location.host + "/ws/note/" + chat_name + "/");
+        all_chatSocket.set(chat_name,chat_socket);
+        chat_socket.onmessage = (event) => {
+            let data = JSON.parse(event.data);
+            document.querySelector('.body #content').innerHTML = data.message;
 
+            const content = document.querySelector('#content');
+            let i = 0;
+
+            for (;i < content.childNodes.length; i++){
+                if (cursor_position > content.childNodes[i].textContent.length){
+                    cursor_position -= content.childNodes[i].textContent.length;
+                }else{
+                    break;
+                }
+            }
+
+            let cursor_el = content.childNodes[i];
+            while(cursor_el.firstChild && cursor_el.className != 'table'){
+                cursor_el = cursor_el.firstChild;
+            }
+
+            let sel = document.getSelection()
+            sel.collapse(cursor_el,cursor_position);
+        }
+    })
+
+    first_card.click()
+})
+  
+document.querySelector('#content').addEventListener('keyup',(e) => {
+    cursor_position = getCaretCharacterOffsetWithin(document.querySelector('#content'));
 })
 
-window.onresize = () => {
-    if (window.innerWidth < 600){
-        const menu = document.querySelector('.menu');
-        if (menu.style.animationName != 'move-left-menu'){
-            body = document.querySelector('.body');
-            body.style=`pointer-events: none;opacity: 0;`;
+function getCaretCharacterOffsetWithin(element) {
+    var caretOffset = 0;
+    var doc = element.ownerDocument || element.document;
+    var win = doc.defaultView || doc.parentWindow;
+    var sel;
+    if (typeof win.getSelection != "undefined") {
+        sel = win.getSelection();
+        if (sel.rangeCount > 0) {
+            var range = win.getSelection().getRangeAt(0);
+            var preCaretRange = range.cloneRange();
+            preCaretRange.selectNodeContents(element);
+            preCaretRange.setEnd(range.endContainer, range.endOffset);
+            caretOffset = preCaretRange.toString().length;
         }
+    } else if ( (sel = doc.selection) && sel.type != "Control") {
+        var textRange = sel.createRange();
+        var preCaretTextRange = doc.body.createTextRange();
+        preCaretTextRange.moveToElementText(element);
+        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+        caretOffset = preCaretTextRange.text.length;
     }
-    else{
-        body = document.querySelector('.body');
-        body.style=`pointer-events: initial;opacity: 1;`;
-        const menu = document.querySelector('.menu');
-        if (menu.style.animationName == 'move-left-menu'){
-            body.style.marginLeft = "0px";
-        }
-    }
-};
+    return caretOffset;
+}
 
 window.addEventListener('mouseup', function(event){
 	const user_box = document.querySelector('#user');
@@ -231,10 +275,10 @@ function choose_page(card,pk,onpopstate = false){
             history.pushState({'section':pk},"",`?page=${pk}`);   
       
         update_table_function();
-        //click the content (div) to delete extra button on the table
-        document.querySelector('#content').click()
     })
 
+    //set current websocket
+    curr_chatSocket = all_chatSocket.get(card.getAttribute('name'));
     if (window.innerWidth < 600){
         open_close_menu(document.querySelector('.menu #icon'));
     }
@@ -261,15 +305,22 @@ function check_empty_title(element){
         element.innerHTML = '';
 }
 
-function autosave(note,table){
+function autosave(note){
+    //update simultaneously to everyone
+    update_note_share(note.childNodes[3].innerHTML);
+
+    let content = "";
+    for (let i = 1; i < note.childElementCount; i++){
+        console.log(note.children[i].innerHTML);
+        content += note.children[i].innerHTML;
+    }
     fetch("/update_note/", { 
         method: 'POST',
         headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
         body:JSON.stringify({
             'pk':curr_page_pk,
-            'title':note.childNodes[1].innerHTML,
-            'content':note.childNodes[3].innerHTML,
-            'table':table
+            'title':note.children[0].innerHTML,
+            'content':content,
         }),
         mode: 'same-origin' // Do not send CSRF token to another domain.
     })
@@ -500,16 +551,19 @@ function show_add_view(){
 }
 
 document.addEventListener('click' , (event) => {
-    const add_view = document.querySelector('#add-view');
+    if (document.querySelector('#add')){
 
-    if (event.target != add_view & event.target != document.querySelector('#add') & add_view.style.display == 'block'){
-        add_view.style.animationName = 'fade-in';
-        add_view.style.animationDuration = '1s';
-        add_view.style.animationFillMode  = 'forwards';
+        const add_view = document.querySelector('#add-view');
 
-        setTimeout(() => {
-            add_view.style.display = 'none';
-        },1000)
+        if (event.target != add_view & event.target != document.querySelector('#add') & add_view.style.display == 'block'){
+            add_view.style.animationName = 'fade-in';
+            add_view.style.animationDuration = '1s';
+            add_view.style.animationFillMode  = 'forwards';
+
+            setTimeout(() => {
+                add_view.style.display = 'none';
+            },1000)
+        }
     }
 })
 
@@ -556,8 +610,7 @@ function add_table(){
         </tr>
     </tbody>
     `
-    document.querySelector('#note #content').append(table);
-    document.querySelector('#note #content').append(document.createElement('br'));
+    document.querySelector('#note').append(table);
 
     update_table_function()
     autosave(document.querySelector('#note'))
@@ -644,3 +697,12 @@ document.addEventListener('click',(event) => {
         })
     };
 })
+
+
+
+function update_note_share(message){
+    curr_chatSocket.send(JSON.stringify({
+        'message': message,
+    }))
+
+}

@@ -378,6 +378,12 @@ body{
     margin-left:15px;
     padding:10px 15px;
     cursor: pointer;
+
+    /*truc letters*/
+    word-wrap: break-word;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 #card:hover{

@@ -1,7 +1,3 @@
-let chat_name = "default";
-let curr_chatSocket;
-let all_chatSocket = new Map();
-
 document.addEventListener('DOMContentLoaded',() => {
     document.querySelectorAll('#card').forEach((card) => {
         chat_name = card.getAttribute("name");
@@ -66,7 +62,7 @@ function save_title(title){
 }
 
 function receive_message(self,event){
-    let pk = self.url.substr(self.url.search('note_')+ 5);
+    let pk = self.url.substr(self.url.search('group')+ 5);
     pk = pk.substr(0,pk.length - 1)
 
     get_message(pk,false);
@@ -117,11 +113,9 @@ function get_message(pk, show = true){
                 show_message(message)
             }
         })
-        console.log(data.read)
         if (data.read == false){
-            elem = document.getElementsByName(`note_${pk}`)[0];
+            elem = document.getElementsByName(`group${pk}`)[0];
             if (elem.innerHTML[elem.innerHTML.length - 1] != '*'){
-                console.log(elem.innerHTML[elem.innerHTML.length - 1]);
                 elem.innerHTML += ' *';
                 elem.style.fontWeight = '900'
             }

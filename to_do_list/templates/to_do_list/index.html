@@ -85,16 +85,11 @@
     <! --- this is script is used to open last page when a new page is created  --->
     {% if go_last_page %}
     <script>
-        document.addEventListener('DOMContentLoaded',() => {
-            const card = document.getElementsByName("note_{{go_last_page}}")[0];
-            choose_page(card,"{{go_last_page}}");
-        })
+        const first_card = document.getElementsByName("note_{{go_last_page}}")[0];
     </script>
     {% else %}
     <script>
-        document.addEventListener('DOMContentLoaded',() => {
-            document.querySelector('#card').click();
-        })
+        const first_card = document.querySelector('#card');
     </script>
     {% endif %}
     {% if error %}
