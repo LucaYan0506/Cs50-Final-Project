@@ -1,7 +1,6 @@
 let chat_name = "default";
 let curr_chatSocket;
 let all_chatSocket = new Map();
-let cursor_position;
 
 document.addEventListener('DOMContentLoaded',() => {
     document.querySelector('#user').onclick = () => {
@@ -13,65 +12,32 @@ document.addEventListener('DOMContentLoaded',() => {
         open_close_submenu(submenu)
     }
     document.querySelectorAll('#card').forEach((card) => {
-        chat_name = card.getAttribute("name");
-        const chat_socket = new WebSocket("ws://" + window.location.host + "/ws/note/" + chat_name + "/");
-        all_chatSocket.set(chat_name,chat_socket);
-        chat_socket.onmessage = (event) => {
-            let data = JSON.parse(event.data);
-            document.querySelector('.body #content').innerHTML = data.message;
+        if (card.getAttribute('name').substring(0,4) == 'note'){
+            chat_name = card.getAttribute("name");
+            const chat_socket = new WebSocket("ws://" + window.location.host + "/ws/note/" + chat_name + "/");
+            all_chatSocket.set(chat_name,chat_socket);
+            
+            chat_socket.onmessage = (event) => {
+                if (chat_socket == curr_chatSocket){
+                    let data = JSON.parse(event.data);
+                    if (data.user != user){
+                        //save current current position
+                        let a = $('#content').caret('pos');   
+    
+                        document.querySelector('.body #content').innerHTML = data.message;
+                        //restore current position
+                        $('#content').caret('pos',a)
 
-            const content = document.querySelector('#content');
-            let i = 0;
-
-            for (;i < content.childNodes.length; i++){
-                if (cursor_position > content.childNodes[i].textContent.length){
-                    cursor_position -= content.childNodes[i].textContent.length;
-                }else{
-                    break;
+                        //re-update table
+                        update_table_function();
+                    }
                 }
             }
-
-            let cursor_el = content.childNodes[i];
-            while(cursor_el.firstChild && cursor_el.className != 'table'){
-                cursor_el = cursor_el.firstChild;
-            }
-
-            let sel = document.getSelection()
-            sel.collapse(cursor_el,cursor_position);
         }
     })
 
     first_card.click()
 })
-  
-document.querySelector('#content').addEventListener('keyup',(e) => {
-    cursor_position = getCaretCharacterOffsetWithin(document.querySelector('#content'));
-})
-
-function getCaretCharacterOffsetWithin(element) {
-    var caretOffset = 0;
-    var doc = element.ownerDocument || element.document;
-    var win = doc.defaultView || doc.parentWindow;
-    var sel;
-    if (typeof win.getSelection != "undefined") {
-        sel = win.getSelection();
-        if (sel.rangeCount > 0) {
-            var range = win.getSelection().getRangeAt(0);
-            var preCaretRange = range.cloneRange();
-            preCaretRange.selectNodeContents(element);
-            preCaretRange.setEnd(range.endContainer, range.endOffset);
-            caretOffset = preCaretRange.toString().length;
-        }
-    } else if ( (sel = doc.selection) && sel.type != "Control") {
-        var textRange = sel.createRange();
-        var preCaretTextRange = doc.body.createTextRange();
-        preCaretTextRange.moveToElementText(element);
-        preCaretTextRange.setEndPoint("EndToEnd", textRange);
-        caretOffset = preCaretTextRange.text.length;
-    }
-    return caretOffset;
-}
-
 window.addEventListener('mouseup', function(event){
 	const user_box = document.querySelector('#user');
     const submenu = document.querySelector('#sub-menu-user');
@@ -306,12 +272,15 @@ function check_empty_title(element){
 }
 
 function autosave(note){
+    document.querySelectorAll('.table').forEach(table => {
+        remove_button_table(table);
+    })
+
     //update simultaneously to everyone
     update_note_share(note.childNodes[3].innerHTML);
 
     let content = "";
     for (let i = 1; i < note.childElementCount; i++){
-        console.log(note.children[i].innerHTML);
         content += note.children[i].innerHTML;
     }
     fetch("/update_note/", { 
@@ -610,7 +579,7 @@ function add_table(){
         </tr>
     </tbody>
     `
-    document.querySelector('#note').append(table);
+    document.querySelector('#content').append(table);
 
     update_table_function()
     autosave(document.querySelector('#note'))
@@ -702,6 +671,7 @@ document.addEventListener('click',(event) => {
 
 function update_note_share(message){
     curr_chatSocket.send(JSON.stringify({
+        'user':user,
         'message': message,
     }))
 

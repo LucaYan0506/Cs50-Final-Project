@@ -53,6 +53,7 @@
     {% csrf_token %}
     <script type="text/javascript"> 
         var user = "{{request.user}}";
+        var first_card = document.querySelector('#card');
      </script>
 
      {% if error %}

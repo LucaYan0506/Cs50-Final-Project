@@ -22,16 +22,19 @@ class NoteRoomConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         message = json.loads(text_data)['message']
+        user = json.loads(text_data)['user']
         
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type' : 'update',
                 'message' : message,
+                'user' : user,
             }
         )    
 
     async def update(self,event):
         await self.send(text_data=json.dumps({
             'message' : event['message'],
+            'user' : event['user'],
         }))

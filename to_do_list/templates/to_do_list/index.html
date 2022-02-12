@@ -42,7 +42,6 @@
     <div class="nav-link" style="float:left;background-color:#e23d32;color:white;padding:5px;margin-left:50px" onclick="delete_note()">Delete</div>
 
     <nav class="nav-bar" style="font-size:18px;">
-
         <div class="nav-link" id="add" style="float:right" onclick="show_add_view()">Add</div>
         <div class="nav-link" style="float:right" onclick="save_btn()">Save</div>
         <div class="nav-link" style="float:right" onclick="show_share_view()">Share</div>
@@ -83,6 +82,9 @@
     </div>
 
     <! --- this is script is used to open last page when a new page is created  --->
+    <script>
+        let user = "{{request.user}}"
+    </script>
     {% if go_last_page %}
     <script>
         const first_card = document.getElementsByName("note_{{go_last_page}}")[0];
