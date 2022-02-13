@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded',() => {
     document.querySelectorAll('#card').forEach((card) => {
         chat_name = card.getAttribute("name");
-        get_message(chat_name.substr(5))
         const chat_socket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + chat_name + "/");
         all_chatSocket.set(chat_name,chat_socket);
         chat_socket.onmessage = (event) => {
@@ -83,10 +82,6 @@ function send_message(message){
         }),
         mode: 'same-origin' // Do not send CSRF token to another domain.
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.message);
-    })
 }
 
 function read_message(pk){
@@ -97,10 +92,6 @@ function read_message(pk){
             'pk':pk
         }),
         mode: 'same-origin' // Do not send CSRF token to another domain.
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
     })
 }
 
@@ -362,7 +353,6 @@ function show_group_detail_view(){
         leave_btn.id = 'leave';
         leave_btn.innerHTML = 'Leave';
         leave_btn.onclick = () => {
-            console.log('success')
             leave();
         }
 
