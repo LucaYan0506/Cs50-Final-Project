@@ -1,8 +1,9 @@
-from statistics import mode
 from django.db import models
 from django.db.models.deletion import CASCADE
 
 from to_do_list.models import *
+
+from encrypted_model_fields.fields import EncryptedCharField
 
 # Create your models here.
 
@@ -33,7 +34,7 @@ class Chat_group(models.Model):
 class Chat_message(models.Model):
     chat_group = models.ForeignKey(Chat_group,default="", on_delete=CASCADE,related_name='chat_message')
     sender = models.ForeignKey(User,default="",on_delete=models.SET_NULL,null=True,related_name='chat_message')
-    message = models.TextField(default="")
+    message = EncryptedCharField(max_length=200)
 
     def serialize(self):
         return{

@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'to_do_list',
     'chat',
-    'channels'
+    'channels',
+    'encrypted_model_fields'
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,5 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
+
+FIELD_ENCRYPTION_KEY = 'XJEIODWxS-4QoE6GQbK7DpclkYJHIDcTSTnU_zktN6o='
