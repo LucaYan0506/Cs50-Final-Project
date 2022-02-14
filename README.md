@@ -22,6 +22,22 @@ I believe that my web application is sufficiently distinct from the other projec
 ## What’s contained in each file:
 
 ## How to run your application:
-Make sure that packets in requirements.txt are installed
+Make sure that [python](https://www.python.org/downloads/), [pip](https://pip.pypa.io/en/stable/installation/) and [pipenv](https://pipenv.pypa.io/en/latest/install/) are installed  
+#### set up virtual environment 
+```
+pipenv install django  
+pipenv shell
+pip install -r requirements.txt
+```
+#### create a superuser (optional)
+```
+python manage.py createsuperuser
+```
+#### run the app
+```
+python manage.py migrate
+python manage.py runserver
+```
+
 
 ## Additional info:
