@@ -20,7 +20,24 @@ The main purpose of the website is:
 ## Distinctiveness and Complexity:
 I believe that my web application is sufficiently distinct from the other projects in this course and more complex than those because I used channels to let users edit the same note page at same time and chat with each other. Also, I used django-encrypted-model-fields to encrypt some sinsitive data and make sure that people can't read db.sqlite without the permission.
 ## What’s contained in each file:
-
+- [chat](https://github.com/LucaYan0506/Cs50-Final-Project/tree/master/chat)
+  - `urls.py` and `views.py` which contain main url for chatting and chatgroup
+  - `models.py` contain a table for chat_group and a table for Chat_message
+  - `routing.py` which routes websockets to the correct path
+  - `consumer.py` which contain AsyncWebsocketConsumer
+- [final_project](https://github.com/LucaYan0506/Cs50-Final-Project/tree/master/final_project)
+  - `urls.py` contains main url of this project
+  - contains the `asgi` file for routing the websocket calls to the consumers
+- [media](https://github.com/LucaYan0506/Cs50-Final-Project/tree/master/media)
+  - image of profile and sidebar
+- [to_do_list](https://github.com/LucaYan0506/Cs50-Final-Project/tree/master/to_do_list)
+  - [static](https://github.com/LucaYan0506/Cs50-Final-Project/tree/master/to_do_list/static) which constains JavaScript and CSS file for the project
+   - [templates](https://github.com/LucaYan0506/Cs50-Final-Project/tree/master/to_do_list/templates) which contains html file
+  - `urls.py` and views.py which contain main url for note_page
+  - `models.py` contain a table for user, a table for folder and a table for page
+  - `routing.py` which routes websockets to the correct path
+  - `consumer.py` which contain AsyncWebsocketConsumer
+- [requirements.txt](https://github.com/LucaYan0506/Cs50-Final-Project/blob/master/requirements.txt) which contains packages used for this project
 ## How to run your application:
 Make sure that [python](https://www.python.org/downloads/), [pip](https://pip.pypa.io/en/stable/installation/) and [pipenv](https://pipenv.pypa.io/en/latest/install/) are installed  
 #### set up virtual environment 
