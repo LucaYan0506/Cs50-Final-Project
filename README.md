@@ -40,4 +40,5 @@ python manage.py runserver
 ```
 
 
-## Additional info:
+## Special thanks
+Brian Yu, David J. Malan and all the staff of CS50.
