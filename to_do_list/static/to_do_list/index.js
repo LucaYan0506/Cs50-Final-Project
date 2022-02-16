@@ -552,7 +552,7 @@ function add_checkbox_l3(){
 }
 
 function add_table(){
-    let n = prompt("Please enter the number of row", "3");
+    let n = prompt("Please enter the number of column", "3");
     let i = 0;
     let rows = "";
     let colomn = "";
