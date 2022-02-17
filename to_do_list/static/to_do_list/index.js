@@ -313,7 +313,8 @@ function print_element(elem){
         @media print {
             @page {
                 size: auto;
-                margin: 0;  /* this affects the margin in the printer settings */
+                margin: 0px;  /* this affects the margin in the printer settings */
+                margin-bottom:2px;
             }
             body * {
             visibility: hidden;
@@ -324,6 +325,9 @@ function print_element(elem){
             #note, #note * {
             visibility: visible;
             }
+            .body #note{
+                overflow:unset;
+            }
         }
         `
     }
@@ -333,6 +337,7 @@ function print_element(elem){
             @page {
                 size: auto;
                 margin: 0;  /* this affects the margin in the printer settings */
+                margin-bottom:2px;
             }
             body * {
             visibility: hidden;
@@ -345,6 +350,9 @@ function print_element(elem){
             }
             #add-note form div, #add-note form select {
                 display: none;
+            }
+            #add-note{
+                overflow:unset;
             }
         }
         `

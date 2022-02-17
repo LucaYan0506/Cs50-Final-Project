@@ -247,6 +247,10 @@ function show_group_detail_view(){
         description.id = 'description';
         description.innerHTML = `Group created by ${data.creator}, on ${data.created_time.substr(0,10)} at ${data.created_time.substr(11,8)}.`;
 
+        if (data.Im_admin == true){
+            description.innerHTML += ` Group-id = ${pk}`;
+        }
+
         const p = document.createElement('p');
         p.innerHTML = "Members";
 
