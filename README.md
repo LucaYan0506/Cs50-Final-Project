@@ -18,7 +18,7 @@ The main purpose of the website is:
 
 
 ## Distinctiveness and Complexity:
-I believe that my web application is sufficiently distinct from the other projects in this course and more complex than those because I used channels to let users edit the same note page at same time and chat with each other. Also, I used django-encrypted-model-fields to encrypt some sinsitive data and make sure that people can't read db.sqlite without the permission.
+I believe that my web application is sufficiently distinct from the other projects in this course and more complex than those because my web application has multiple features and most of them are different than other project in this course. For example, I used `channels` to let different users edit the same note page at same time and to chat with each other. Also, I used `django-encrypted-model-fields` to encrypt some sinsitive data and make sure that people can't read db.sqlite without the permission.
 ## What’s contained in each file:
 - [chat](https://github.com/LucaYan0506/Cs50-Final-Project/tree/master/chat)
   - `urls.py` and `views.py` which contain main url for chatting and chatgroup
