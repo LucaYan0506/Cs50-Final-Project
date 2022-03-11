@@ -2,8 +2,10 @@
 ## Video: [CS50’s Web Programming with Python and JavaScript Final Project](https://www.youtube.com/watch?v=bTbj_oWgWD0)
 
 
-For the final project of CS50 web programming with python and JavaScript I created a website using Django Rest Framework for the backend and HTML & CSS & JS for the backend.
-
+For the final project of CS50 web programming with python and JavaScript I created a website using Django Rest Framework for the backend and HTML & CSS & JS for the backend.  
+I created this website because I would like a website where I can write notes during my lessons and ,in the same time, chat with other users  (so I don't need to use a website for chatting and another website for taking note).  
+To create this website I watched a tutorial on youtube about asynchronous request(`channels`). Based on that video, I created a chatroom and pages where multiple users can edit the same document (users can see changes made by other users).  
+  
 The main purpose of the website is:
 - write notes
 - create a chatgroup and chat with other user
@@ -18,7 +20,8 @@ The main purpose of the website is:
 
 
 ## Distinctiveness and Complexity:
-I believe that my web application is sufficiently distinct from the other projects in this course and more complex than those because I used channels to let users edit the same note page at same time and chat with each other. Also, I used django-encrypted-model-fields to encrypt some sensitive data and make sure that people can't read db.sqlite without  permission.
+I believe that my web application is sufficiently distinct from the other projects in this course because my website is about taking notes and chatroom which is completely different than other projects. Also, I used django-encrypted-model-fields to encrypt some sensitive data and make sure that people can't read db.sqlite without permission.
+I also believe that it is more complex than those projects because it has more features than other projects, more lines of code and because of the time I spent (almost 2 month).
 ## What’s contained in each file:
 - [final_project](https://github.com/me50/LucaYan0506/tree/web50/projects/2020/x/capstone/final_project) is the project folder. It contains:
   - [asgi.py](https://github.com/me50/LucaYan0506/blob/web50/projects/2020/x/capstone/final_project/asgi.py): here, there is the default setting to have asynchronous web servers and applications. It allows the server to communicate with the client asynchronously
